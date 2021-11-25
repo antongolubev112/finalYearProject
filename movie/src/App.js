@@ -4,6 +4,7 @@ import './Navbar.js';
 import {BrowserRouter as Router,Switch,Route,Routes} from "react-router-dom";
 import Header from './Navbar.js';
 import Home from './Home';
+import {Movies} from './Movies'
 
 function App() {
   return (
@@ -11,7 +12,7 @@ function App() {
       <div className="App">
       <Header/>
         <Routes>
-          <Route path="/" element={<Home/>}>
+          <Route path="/" element={<Movies/>}>
           </Route>
         </Routes>
       </div>

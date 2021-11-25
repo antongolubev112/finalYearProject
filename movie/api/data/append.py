@@ -2,12 +2,12 @@ import pandas as pd
 import numpy as np
 import csv
 
-input = pd.read_csv('blockbusters.csv')
-output=pd.read_csv('output.csv')
+input = pd.read_csv('output.csv')
+output=pd.read_csv('output2.csv')
 
 def add_id():
     input.insert(0, 'id', range(0, 0 + len(input)))
-    input.to_csv('output.csv', index=False)
+    input.to_csv('output2.csv', index=False)
 
 def remove_nan():
     #remove nan
@@ -30,5 +30,6 @@ def unique_genre():
     # saving the dataframe 
     df.to_csv('genres.csv') 
 
-remove_nan()
-unique_genre()
+add_id()
+#remove_nan()
+#unique_genre()
