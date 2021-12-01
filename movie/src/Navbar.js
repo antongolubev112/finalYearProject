@@ -10,17 +10,41 @@ function Header() {
         <div className='navbar'>
             {/* Logo */}
             <Link to="/">
-                <img className="navbar__logo" src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2-789iM0kU29v6e1lqfkh6BTgvizVovmn1Q&usqp=CAU'/>
+                <img className="navbar__logo" src='https://images.creativemarket.com/0.1.0/ps/7414066/1820/1214/m1/fpnw/wm1/logo-design-for-movie-production-company-01-.jpg?1575502358&s=c37b3e6a8863b415070b669f6c8a457c'/>
             </Link>
-            
-            <div className="navbar__searchbar">
-                {/* Search */}
-                <input className='navbar__searchInput' type='text'/>
-                {/* Search icon */}
-                <SearchIcon className='navbar__searchIcon'/>
-            </div>
 
             <div className='navbar__buttons'>
+                <div className='navbar__option'>
+                        <span className='navbar__optionLineTwo'>
+                            Home
+                        </span>
+                    </div>
+
+                <div className='navbar__option'>
+                    <span className='navbar__optionLineTwo'>
+                        Liked Movies
+                    </span>
+                </div>
+
+                <div className='navbar__option'>
+                    <span className='navbar__optionLineTwo'>
+                        Recommendations
+                    </span>
+                </div>
+
+                <div className='navbar__option'>
+                    <span className='navbar__optionLineTwo'>
+                        Genres
+                    </span>
+                </div>
+            </div>
+            <div className="navbar__searchbar">
+                {/* Search icon */}
+                <SearchIcon className='navbar__searchIcon'/>
+                {/* Search */}
+                <input className='navbar__searchInput' type='text'/>
+                
+                </div>
                 <Link to={'/login'}>
                     <div className='navbar__option'>
                         <span className='navbar__optionLineOne'>
@@ -31,16 +55,6 @@ function Header() {
                         </span>
                     </div>
                 </Link>
-
-                <div className='navbar__option'>
-                    <span className='navbar__optionLineOne'>
-                        Returns
-                    </span>
-
-                    <span className='navbar__optionLineTwo'>
-                        Orders
-                    </span>
-                </div>
 
                 <div className='navbar__option'>
                     <span className='navbar__optionLineOne'>
@@ -60,8 +74,6 @@ function Header() {
                         navbar__basketCount"></span>
                     </div>
                 </Link>
-                
-            </div>
         </div>
     )
 }

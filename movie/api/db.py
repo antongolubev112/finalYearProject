@@ -1,7 +1,9 @@
+from enum import unique
 import os;
 from flask import Flask,json,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, Float, Date
+from flask_jwt_extended import JWTManager
 
 db_user=os.environ.get('DB_USER')
 db_password=os.environ.get('DB_PASS')
@@ -10,6 +12,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://'+db_user+':pgadmin4@local
 engine='postgresql://'+db_user+':pgadmin4@localhost/fyp'
 db=SQLAlchemy(app)
 
+app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY')  # Change this!
+jwt = JWTManager(app)
+
 #many to many bidirectional relationship
 #junction table
 movieGenre=db.Table('movieGenre',
@@ -17,6 +22,11 @@ movieGenre=db.Table('movieGenre',
     db.Column('genre_id',db.Integer, ForeignKey('genre.genreId'))
 )
 
+class User(db.Model):
+    __tablename__="user"
+    user_Id=db.Column(db.Integer,unique=True, primary_key=True)
+    email= db.Column(db.String, unique=True, nullable=False)
+    password= db.Column(db.String, nullable=False)
 
 class Movie(db.Model):
     __tablename__="movies"
