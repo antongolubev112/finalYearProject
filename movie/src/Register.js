@@ -1,15 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
+import './login.css'
 import { Link } from "react-router-dom";
-import "./login.css";
 
-export const Login = () => {
+export const Register = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  //access token
-  const token = sessionStorage.getItem("token");
-
-  const handleLogin = () => {
+  const handleRegister = () => {
     const options = {
       method: "POST",
       // tell backend that this data will be json because that's what its expecting
@@ -18,38 +17,48 @@ export const Login = () => {
       },
       //convert email and password to a json string
       body: JSON.stringify({
+        fname: firstName,
+        lname: lastName,
         email: email,
         password: password,
       }),
     };
-    //fetch from /token and pass in options
-    fetch("/token", options)
-      .then((response) => {
-        if (response.status == 200) return response.json();
-        else alert("There has been some error");
-      })
-      //store access token fetched from the backend
-      .then((data) => {
-        console.log("retrieved token from backend: ", data.access_token);
-        sessionStorage.setItem("token", data.access_token);
-      })
+    fetch("/register", options)
+      .then(response=> response.json())
+      .then(message=> {
+        console.log(message)
+    })
       //log error
       .catch((error) => {
         console.error("There was an error: ", error);
       });
   };
+
   return (
     <div>
       {/* If token exists and is not empty/or undefined then say you are logged in
-      {token && token != " " && token != undefined ? (
-        "You are logged in with this token " + token
-      ) : (
-        //if not logged in go to email form */}
+    {token && token != " " && token != undefined ? (
+      "You are logged in with this token " + token
+    ) : (
+      //if not logged in go to email form */}
       <div className="login">
         <div className="login__container">
           {/* pass email value in useState hook aboce using setEmail */}
           <form className="login__form">
-            <h1> Sign in </h1>
+            <h1> Register </h1>
+            <input
+              type="text"
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)
+            }
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
             <input
               type="text"
               placeholder="Email"
@@ -63,14 +72,19 @@ export const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <button className="login__button" onClick={handleLogin}>
-              Login
+            <button className="login__button" onClick={handleRegister}>
+              Register
             </button>
-              <div className='register'>
-                <Link to="/register" style={{ color: 'white', textDecoration: 'none'}}>
-                  <span>New to Mov.ie? <b>Sign up now!</b></span>
-                </Link>
-              </div>
+            <div className="register">
+              <Link
+                to="/login"
+                style={{ color: "white", textDecoration: "none" }}
+              >
+                <span>
+                  Already have an account? <b>Log in here!</b>
+                </span>
+              </Link>
+            </div>
           </form>
         </div>
       </div>

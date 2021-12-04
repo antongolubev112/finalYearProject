@@ -1,8 +1,11 @@
-from db import Movie,app
-from flask import jsonify,request
+from re import U
+from sqlalchemy.sql.functions import user
+from db import Movie,app, User, db
+from sqlalchemy import func
+from flask import jsonify,request,json
 from flask_jwt_extended import create_access_token
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
+import bcrypt
+
 
 def movie_serializer(movie):
         return{
@@ -27,13 +30,48 @@ def index():
 # create_access_token() function is used to actually generate the JWT.
 @app.route('/token', methods=['POST'])
 def create_auth_token():
-    email = request.json.get("email", None)
-    password = request.json.get("password", None)
+    email = request.json.get("email")
+    password = request.json.get("password")
     if email != "test" or password != "test":
         return jsonify({"msg": "Bad username or password"}), 401
 
     access_token = create_access_token(identity=email)
     return jsonify(access_token=access_token)
+
+@app.route('/register',methods=['POST'])
+def register():
+
+    print("In api.register()")
+    #convert to python dictionary 
+    request_data = json.loads(request.data)
+    print("loaded json")
+    
+    #find the last user id
+    biggest_id=db.session.query(func.max(User.user_Id)).scalar()
+    if biggest_id == None:
+        biggest_id=-1
+
+    #set the next id to be id+1
+    id= biggest_id+1
+
+    # Hash a password for the first time, with a randomly-generated salt
+    hashed = bcrypt.hashpw(request_data['password'].encode('utf-8'), bcrypt.gensalt(12))
+    print("Password hashed")
+
+    print(request_data)
+    
+    #map the response from front end to user model
+    user= User(user_Id=id,
+    fname=request_data['fname'],
+    lname=request_data['lname'],
+    email=request_data['email'],
+    password=hashed)
+
+    #push to database
+    db.session.add(user)
+    db.session.commit()
+
+    return{'201': 'user created successfully'}
 
 if __name__=='__main__':
     app.run(debug=True)
