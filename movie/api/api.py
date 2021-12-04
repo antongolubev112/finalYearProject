@@ -73,6 +73,12 @@ def register():
 
     return{'201': 'user created successfully'}
 
+@app.route('/movie/<int:id>')
+def show_movie(id):
+    #get movie from database based on id number
+    print(id)
+    return jsonify([*map(movie_serializer,Movie.query.filter_by(movieId=id))])
+
 if __name__=='__main__':
     app.run(debug=True)
     

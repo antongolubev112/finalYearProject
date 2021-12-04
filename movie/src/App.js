@@ -12,6 +12,7 @@ import Home from "./Home";
 import { Movies } from "./Movies";
 import { Login } from "./Login";
 import { Register } from "./Register";
+import {ShowMovie} from './ShowMovie';
 
 function App() {
   return (
@@ -19,9 +20,10 @@ function App() {
       <div className="App">
         <Header />
         <Routes>
-          <Route path="/" element={<Movies />}></Route>
+          <Route exact path="/" element={<Movies />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/register" element={<Register />}></Route>
+          <Route path="/:id" element={<ShowMovie />}></Route>
         </Routes>
       </div>
     </Router>
