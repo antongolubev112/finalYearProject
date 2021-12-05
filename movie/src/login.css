@@ -70,3 +70,8 @@ h1{
 .register {
     text-decoration: none; /* no underline */
   }
+
+.login__error{
+  color: red;
+  font-size: 12;
+}
