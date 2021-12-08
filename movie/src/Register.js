@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import './login.css'
-import { Link } from "react-router-dom";
+import "./login.css";
+import { Link , Navigate} from "react-router-dom";
 
 export const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [registerError, setRegisterError]= useState("")
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     const options = {
       method: "POST",
       // tell backend that this data will be json because that's what its expecting
@@ -23,24 +24,26 @@ export const Register = () => {
         password: password,
       }),
     };
-    fetch("/register", options)
-      .then(response=> response.json())
-      .then(message=> {
-        console.log(message)
-    })
+    try {
+      const response = await fetch("/register", options);
+      const json = await response.json();
+      if (response.status === 200) {
+       <Navigate to={'/'} />;
+        return json;
+      }
+      else {
+        //set error passed from api 
+        setRegisterError(json.msg)
+      } 
+      console.log(json);
+    } catch (error) {
       //log error
-      .catch((error) => {
-        console.error("There was an error: ", error);
-      });
+      console.error("There was an error: ", error);
+    }
   };
 
   return (
     <div>
-      {/* If token exists and is not empty/or undefined then say you are logged in
-    {token && token != " " && token != undefined ? (
-      "You are logged in with this token " + token
-    ) : (
-      //if not logged in go to email form */}
       <div className="login">
         <div className="login__container">
           {/* pass email value in useState hook aboce using setEmail */}
@@ -50,8 +53,7 @@ export const Register = () => {
               type="text"
               placeholder="First Name"
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)
-            }
+              onChange={(e) => setFirstName(e.target.value)}
             />
             <input
               type="text"
@@ -75,6 +77,7 @@ export const Register = () => {
             <button className="login__button" onClick={handleRegister}>
               Register
             </button>
+            <div className="login__error">{registerError}</div>
             <div className="register">
               <Link
                 to="/login"

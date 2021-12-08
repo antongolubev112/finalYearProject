@@ -1,10 +1,19 @@
 from re import U
+from sqlalchemy.sql.expression import false
 from sqlalchemy.sql.functions import user
 from db import Movie,app, User, db
 from sqlalchemy import func
 from flask import jsonify,request,json
 from flask_jwt_extended import create_access_token
 import bcrypt
+import os
+
+salt=bcrypt.gensalt()
+
+def check_user(email):
+    exists = db.session.query(User.user_Id).filter_by(email=email).first() is not None
+    return exists
+
 
 
 def movie_serializer(movie):
@@ -31,22 +40,65 @@ def index():
 @app.route('/token', methods=['POST'])
 def create_auth_token():
     email = request.json.get("email")
-    password = request.json.get("password")
-    if email != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
+
+    password = request.json.get("password",None)
+    
+    #query db to see if a user id that has the passed email exists
+    exists=check_user(email)
+    print("User exists: ", exists)
+    
+    if exists==False:
+        print("User does not exist")
+        return jsonify({"msg": "An account with this email does not exist!"}), 401
+
+    hash=db.session.query(User.password).filter_by(email=email).one()
+    print("Hash: ", hash)
+
+    #if given password does not match hash password on db then return error
+    #password from front end has to be encoded because cryptographic functions only work on byte strings
+    #running a SELECT returns a tuple, so hash[0] is needed because I only want the first element of the tuple
+    if not bcrypt.checkpw(password.encode('utf-8'),hash[0]):
+        print("Password is wrong")
+        return jsonify({"msg": "Incorrect password!"}), 401
+        
+    #print("Salt",bcrypt.gensalt(12))
 
     access_token = create_access_token(identity=email)
+    print("token: "+access_token)
     return jsonify(access_token=access_token)
 
 @app.route('/register',methods=['POST'])
 def register():
-
     print("In api.register()")
+
     #convert to python dictionary 
     request_data = json.loads(request.data)
     print("loaded json")
     
-    #find the last user id
+    print("Passed pw: ",request_data['password'])
+
+    #Check if user exists
+    exists = check_user(request_data['email'])
+
+    #validation
+    if exists:
+        print("email already exists ")
+        return jsonify({"msg": "User with this email already exists!"}), 401
+
+    if not request_data['fname'] or not request_data['lname'] :
+        return jsonify({"msg": "Name is not valid!"}), 401
+
+    if not request_data['email'] :
+        return jsonify({"msg": "Email is not valid!"}), 401
+
+    if '@' not in request_data['email'] or '.com' not in request_data['email'] :
+        return jsonify({"msg": "Email must contain an '@' sign!"}), 401
+
+    if not request_data['password'] :
+        return jsonify({"msg": "Password is not valid!"}), 401
+
+
+    #find the latest user's id
     biggest_id=db.session.query(func.max(User.user_Id)).scalar()
     if biggest_id == None:
         biggest_id=-1
@@ -55,8 +107,8 @@ def register():
     id= biggest_id+1
 
     # Hash a password for the first time, with a randomly-generated salt
-    hashed = bcrypt.hashpw(request_data['password'].encode('utf-8'), bcrypt.gensalt(12))
-    print("Password hashed")
+    hashed = bcrypt.hashpw(request_data['password'].encode('utf-8'), salt)
+    print("Password hashed: ",hashed)
 
     print(request_data)
     

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./login.css";
 
 export const Login = () => {
@@ -7,6 +7,8 @@ export const Login = () => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passError, setPassError] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const history = useNavigate();
   // const [nameError,setNameError]= useState('');
 
   //access token
@@ -27,10 +29,10 @@ export const Login = () => {
     return true;
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const isValid = validate();
-    if(!isValid){
-      console.log("Not valid")
+    if (!isValid) {
+      console.log("Not valid");
     }
     const options = {
       method: "POST",
@@ -44,27 +46,32 @@ export const Login = () => {
         password: password,
       }),
     };
+
     //fetch from /token and pass in options
     if (isValid) {
-      console.log("is valid")
-      fetch("/token", options)
-        .then((response) => {
-          if (response.status == 200) return response.json();
-          else alert("There has been some error");
-        })
+      try {
+        console.log("is valid");
+        const response = await fetch("/token", options);
+        const json = await response.json();
+        if (response.status === 200) return json;
+        else{
+          //set error passed from api 
+          setLoginError(json.msg)
+        } 
+
         //store access token fetched from the backend
-        .then((data) => {
-          console.log("retrieved token from backend: ", data.access_token);
-          sessionStorage.setItem("token", data.access_token);
-          setEmail('');
-          setPassword('')
-        })
+        console.log("retrieved token from backend: ", json.access_token);
+        sessionStorage.setItem("token", json.access_token);
+        history.push("/");
+        setEmail("");
+        setPassword("");
+      } catch (error) {
         //log error
-        .catch((error) => {
-          console.error("There was an error: ", error);
-        });
+        console.error("There was an error: ", error);
+      }
     }
   };
+
   return (
     <div>
       {/* If token exists and is not empty/or undefined then say you are logged in
@@ -84,6 +91,7 @@ export const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
             <div className="login__error">{emailError}</div>
+            <div className="login__error">{loginError}</div>
             {/* pass  password value in useState hook aboce using setEmail */}
             <input
               type="password"
