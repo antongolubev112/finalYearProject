@@ -7,26 +7,30 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-import Header from "./Navbar.js";
+import Header from "./Header";
 import Home from "./Home";
 import { Movies } from "./Movies";
 import { Login } from "./Login";
 import { Register } from "./Register";
-import {ShowMovie} from './ShowMovie';
+import { ShowMovie } from "./ShowMovie";
+import BottomNav from "./BottomNav";
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Header />
-        <Routes>
-          <Route exact path="/" element={<Movies />}></Route>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/register" element={<Register />}></Route>
-          <Route path="/:id" element={<ShowMovie />}></Route>
-        </Routes>
-      </div>
-    </Router>
+    <>
+    <Header/>
+      <Router>
+        <div className="App">
+          <Routes>
+           <Route exact path="/" element={<Movies />}></Route> 
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/register" element={<Register />}></Route>
+            <Route path="/:id" element={<ShowMovie />}></Route>
+          </Routes>
+        </div>
+      </Router>
+      <BottomNav/>
+    </>
   );
 }
 

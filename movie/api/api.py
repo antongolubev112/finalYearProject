@@ -14,8 +14,6 @@ def check_user(email):
     exists = db.session.query(User.user_Id).filter_by(email=email).first() is not None
     return exists
 
-
-
 def movie_serializer(movie):
         return{
             'id':movie.movieId,
@@ -51,6 +49,7 @@ def create_auth_token():
         print("User does not exist")
         return jsonify({"msg": "An account with this email does not exist!"}), 401
 
+    #check
     hash=db.session.query(User.password).filter_by(email=email).one()
     print("Hash: ", hash)
 
@@ -85,18 +84,14 @@ def register():
         print("email already exists ")
         return jsonify({"msg": "User with this email already exists!"}), 401
 
-    if not request_data['fname'] or not request_data['lname'] :
+    elif not request_data['fname'] or not request_data['lname'] :
         return jsonify({"msg": "Name is not valid!"}), 401
 
-    if not request_data['email'] :
+    elif not request_data['email'] or '@' not in request_data['email'] or '.com' not in request_data['email'] :
         return jsonify({"msg": "Email is not valid!"}), 401
 
-    if '@' not in request_data['email'] or '.com' not in request_data['email'] :
-        return jsonify({"msg": "Email must contain an '@' sign!"}), 401
-
-    if not request_data['password'] :
+    elif not request_data['password'] :
         return jsonify({"msg": "Password is not valid!"}), 401
-
 
     #find the latest user's id
     biggest_id=db.session.query(func.max(User.user_Id)).scalar()

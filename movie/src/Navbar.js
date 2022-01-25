@@ -17,11 +17,11 @@ function Header() {
       </Link>
 
       <div className="navbar__buttons">
-        <div className="navbar__option">
-          <Link to="/">
+        <Link to="/" style={{ textDecoration: "none" }} color="white">
+          <div className="navbar__option">
             <span className="navbar__optionLineTwo">Home</span>
-          </Link>
-        </div>
+          </div>
+        </Link>
 
         <div className="navbar__option">
           <span className="navbar__optionLineTwo">Liked Movies</span>
@@ -53,17 +53,6 @@ function Header() {
 
         <span className="navbar__optionLineTwo">Account</span>
       </div>
-
-      <Link to="/checkout">
-        <div className="navbar__optionBasket">
-          <ShoppingCartIcon />
-          {/* Two class names */}
-          <span
-            className="navbar__optionLineTwo 
-                        navbar__basketCount"
-          ></span>
-        </div>
-      </Link>
     </div>
   );
 }

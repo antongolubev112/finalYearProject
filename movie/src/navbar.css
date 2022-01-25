@@ -1,12 +1,12 @@
 .navbar {
-    height: 70px;
+    height: 50px;
     display: flex;
+    justify-content: center;
     align-items: center;
-    background-color: #0f171e;
+    background-color: #8EE4AF;
     position: sticky;
     top: 0;
     z-index: 100;
-    width: 100vw;
   }
 
   .navbar__logo {
@@ -29,7 +29,7 @@
     height: 12px;
     padding: 10px;
     border: none;
-    width: 70%;
+    width: 60%;
     background-color: grey
   }
   
@@ -48,17 +48,6 @@
     font-weight: 800;
   }
   
-  .navbar__optionBasket {
-    display: flex;
-    align-items: center;
-    color: white;
-  }
-  
-  .navbar__basketCount {
-    margin-right: 10px;
-    margin-left: 10 px;
-  }
-
   .navbar__buttons {
     display: flex;
     justify-content: space-evenly;

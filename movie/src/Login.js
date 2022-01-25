@@ -29,7 +29,8 @@ export const Login = () => {
     return true;
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
     const isValid = validate();
     if (!isValid) {
       console.log("Not valid");
