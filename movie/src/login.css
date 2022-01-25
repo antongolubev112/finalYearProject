@@ -38,7 +38,7 @@
     padding: 30px;
     border-radius: 5px;
     margin: 0 auto;
-    background-color: #0f171e;
+    background-color: #0B3C5D;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -55,7 +55,7 @@ input {
 button{
     height:40px;
     border-radius: 5px;
-    background-color: #cd9042;
+    background-color: #d9b310;
     color:white;
     border: none;
     font-size: 18px;

@@ -14,22 +14,25 @@ import { Login } from "./Login";
 import { Register } from "./Register";
 import { ShowMovie } from "./ShowMovie";
 import BottomNav from "./BottomNav";
+import { Container } from "@material-ui/core";
+import {MovieList} from "./MovieList"
 
 function App() {
   return (
     <>
-    <Header/>
+      <Header />
       <Router>
         <div className="App">
-          <Routes>
-           <Route exact path="/" element={<Movies />}></Route> 
-            <Route path="/login" element={<Login />}></Route>
-            <Route path="/register" element={<Register />}></Route>
-            <Route path="/:id" element={<ShowMovie />}></Route>
-          </Routes>
+            <Routes>
+              <Route exact path="/" element={<MovieList />}></Route>
+              <Route path="/login" element={<Login />}></Route>
+              <Route path="/register" element={<Register />}></Route>
+              <Route path="/:id" element={<ShowMovie />}></Route>
+            </Routes>
         </div>
+      <BottomNav />
       </Router>
-      <BottomNav/>
+      
     </>
   );
 }

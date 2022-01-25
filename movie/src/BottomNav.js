@@ -1,4 +1,6 @@
 import * as React from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
@@ -15,7 +17,7 @@ const useStyles = makeStyles({
     width: "100%",
     position: "fixed",
     bottom: 0,
-    backgroundColor: "#f4decb !important" ,
+    backgroundColor: "#1D2731 !important" ,
     zIndex: 100,
     paddingTop: '2px',
   },
@@ -23,7 +25,20 @@ const useStyles = makeStyles({
 
 export default function BottomNav() {
   const classes = useStyles();
+  let navigate = useNavigate(); 
   const [value, setValue] = React.useState(0);
+
+  useEffect(() => {
+    if (value === 0) {
+        navigate("/");
+    } else if (value === 1) {
+        navigate("/recommendations");
+    } else if (value === 2) {
+        navigate("/favorites");
+    } else if (value === 3) {
+        navigate("/login")
+    }
+  }, [value, navigate]);
 
   return (
     <Box sx={{ width: 500 }}>
