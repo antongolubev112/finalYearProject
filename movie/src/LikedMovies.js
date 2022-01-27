@@ -1,7 +1,7 @@
 const MovieList = () => {
     return (
         <div>
-            <span className="LikedMovies__Title"> FavoriteMovies </span>
+            <span className="LikedMovies__Title"> Favorite Movies </span>
         </div>
     )
 }

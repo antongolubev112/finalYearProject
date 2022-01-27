@@ -4,9 +4,8 @@ import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
-import RestoreIcon from "@mui/icons-material/Restore";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import WhatshotIcon from '@mui/icons-material/Whatshot';
 import { makeStyles } from "@material-ui/core/styles";
 import HomeIcon from "@mui/icons-material/Home";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -32,10 +31,12 @@ export default function BottomNav() {
     if (value === 0) {
         navigate("/");
     } else if (value === 1) {
-        navigate("/recommendations");
+        navigate("/trending");
     } else if (value === 2) {
-        navigate("/favorites");
+        navigate("/recommendations");
     } else if (value === 3) {
+        navigate("/favorites")
+    } else if (value === 4) {
         navigate("/login")
     }
   }, [value, navigate]);
@@ -50,10 +51,11 @@ export default function BottomNav() {
         }}
         className={classes.root}
       >
-        <BottomNavigationAction style={{ color: "black" }} label="Home" icon={<HomeIcon />} />
-        <BottomNavigationAction style={{ color: "black" }} label="Recommendations" icon={<MovieIcon />} />
-        <BottomNavigationAction style={{ color: "black" }} label="Favorites" icon={<FavoriteIcon />} />
-        <BottomNavigationAction style={{ color: "black" }} label="Account" icon={<AccountCircleIcon />} />
+        <BottomNavigationAction style={{ color: "white" }} label="Top Rated" icon={<HomeIcon/>} />
+        <BottomNavigationAction style={{ color: "white" }} label="Trending" icon={<WhatshotIcon/>} />
+        <BottomNavigationAction style={{ color: "white" }} label="Recommendations" icon={<MovieIcon />} />
+        <BottomNavigationAction style={{ color: "white" }} label="Favorites" icon={<FavoriteIcon/>} />
+        <BottomNavigationAction style={{ color: "white" }} label="Account" icon={<AccountCircleIcon/>} />
         
       </BottomNavigation>
     </Box>

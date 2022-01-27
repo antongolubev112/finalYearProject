@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { SingleMovie } from "./SingleMovie";
+import './movielist.css'
 
 export const MovieList = () => {
     const [content,setContent]= useState([]);
