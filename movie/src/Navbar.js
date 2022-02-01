@@ -1,11 +1,9 @@
 import React from "react";
 import "./navbar.css";
 import SearchIcon from "@material-ui/icons/Search";
-import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import { Link } from "react-router-dom";
 
 function Header() {
-  //const[{basket,user},dispatch]=useStateValue();
   return (
     <div className="navbar">
       {/* Logo */}
@@ -19,9 +17,13 @@ function Header() {
       <div className="navbar__buttons">
         <Link to="/" style={{ textDecoration: "none" }} color="white">
           <div className="navbar__option">
-            <span className="navbar__optionLineTwo">Home</span>
+            <span className="navbar__optionLineTwo">Top Rated</span>
           </div>
         </Link>
+
+        <div className="navbar__option">
+          <span className="navbar__optionLineTwo">Trending</span>
+        </div>
 
         <div className="navbar__option">
           <span className="navbar__optionLineTwo">Liked Movies</span>
@@ -41,7 +43,7 @@ function Header() {
         {/* Search */}
         <input className="navbar__searchInput" type="text" />
       </div>
-      <Link to={"/login"}>
+      <Link to="/login" style={{ textDecoration: "none" }} color="white">
         <div className="navbar__option">
           <span className="navbar__optionLineOne">Hello Guest</span>
           <span className="navbar__optionLineTwo">Sign in</span>
