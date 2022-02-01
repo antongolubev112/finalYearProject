@@ -11,6 +11,7 @@ import { ShowMovie } from "./ShowMovie";
 import BottomNav from "./BottomNav";
 import { TopRated } from "./TopRated";
 import Navbar from "./Navbar"
+import { Trending } from "./Trending";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Routes>
               <Route exact path="/" element={<TopRated />}></Route>
               <Route path="/login" element={<Login />}></Route>
+              <Route path="/trending" element={<Trending/>}></Route>
               <Route path="/register" element={<Register />}></Route>
               <Route path="/:id" element={<ShowMovie />}></Route>
             </Routes>

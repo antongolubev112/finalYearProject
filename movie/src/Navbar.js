@@ -21,9 +21,11 @@ function Header() {
           </div>
         </Link>
 
-        <div className="navbar__option">
-          <span className="navbar__optionLineTwo">Trending</span>
-        </div>
+        <Link to="/trending" style={{ textDecoration: "none" }} color="white">
+          <div className="navbar__option">
+            <span className="navbar__optionLineTwo">Trending</span>
+          </div>
+        </Link>
 
         <div className="navbar__option">
           <span className="navbar__optionLineTwo">Liked Movies</span>

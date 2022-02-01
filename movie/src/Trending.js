@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import { SingleMovie } from "./SingleMovie";
 import "./movielist.css";
 
-export const TopRated = () => {
+export const Trending = () => {
   const [content, setContent] = useState([]);
   const [page, setPage] = useState([1]);
 
   const updateMovies = async () => {
       //fetch movies from api
     const { data } = await axios.get(
-      `https://api.themoviedb.org/3/movie/top_rated?api_key=${process.env.REACT_APP_API}&page=${page}`
+      `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.REACT_APP_API}&page=${page}`
     );
     console.log(data);
     //append fetched movies to previously fetched movies
