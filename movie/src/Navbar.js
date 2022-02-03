@@ -15,15 +15,15 @@ function Header() {
       </Link>
 
       <div className="navbar__buttons">
-        <Link to="/" style={{ textDecoration: "none" }} color="white">
+      <Link to="/" style={{ textDecoration: "none" }} color="white">
           <div className="navbar__option">
-            <span className="navbar__optionLineTwo">Top Rated</span>
+            <span className="navbar__optionLineTwo">All Movies</span>
           </div>
         </Link>
 
-        <Link to="/trending" style={{ textDecoration: "none" }} color="white">
+        <Link to="/top" style={{ textDecoration: "none" }} color="white">
           <div className="navbar__option">
-            <span className="navbar__optionLineTwo">Trending</span>
+            <span className="navbar__optionLineTwo">Top Rated</span>
           </div>
         </Link>
 
@@ -34,17 +34,13 @@ function Header() {
         <div className="navbar__option">
           <span className="navbar__optionLineTwo">Recommendations</span>
         </div>
-
-        <div className="navbar__option">
-          <span className="navbar__optionLineTwo">Genres</span>
-        </div>
       </div>
-      <div className="navbar__searchbar">
+      <Link to="/search" style={{ textDecoration: "none" }} color="white">
+      <div className="navbar__option">
         {/* Search icon */}
-        <SearchIcon className="navbar__searchIcon" />
-        {/* Search */}
-        <input className="navbar__searchInput" type="text" />
+        <span className="navbar__optionLineTwo">Search</span>
       </div>
+      </Link>
       <Link to="/login" style={{ textDecoration: "none" }} color="white">
         <div className="navbar__option">
           <span className="navbar__optionLineOne">Hello Guest</span>

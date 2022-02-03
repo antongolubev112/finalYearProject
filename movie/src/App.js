@@ -9,7 +9,8 @@ import { Register } from "./Register";
 import { ShowMovie } from "./ShowMovie";
 import { TopRated } from "./TopRated";
 import Navbar from "./Navbar"
-import { Trending } from "./Trending";
+import { Discover } from "./Discover";
+import Search from "./Search"
 
 function App() {
   return (
@@ -18,11 +19,12 @@ function App() {
         <Navbar/>
           <div className="App">
             <Routes>
-              <Route exact path="/" element={<TopRated />}></Route>
+              <Route exact path="/" element={<Discover/>}></Route>
               <Route path="/login" element={<Login />}></Route>
-              <Route path="/trending" element={<Trending/>}></Route>
+              <Route path="/top" element={<TopRated/>}></Route>
               <Route path="/register" element={<Register />}></Route>
               <Route path="/:id" element={<ShowMovie />}></Route>
+              <Route path="/search" element={<Search/>}></Route>
             </Routes>
           </div>
       </Router>
