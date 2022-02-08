@@ -61,7 +61,6 @@ export const Discover = () => {
     if(!selectedGenres.length==0){
       moviesWithGenre();
     }
-    
   },[genresForApi]);
   return (
     <div>

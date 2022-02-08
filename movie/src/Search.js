@@ -27,11 +27,19 @@ const Search = () => {
     const {data} = await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${process.env.REACT_APP_API}&query=${searchInput}`);
     
     setContent(data.results);
+    console.log(data)
   }
 
+  const fetchActor= async () =>{
+    const {data} = await axios.get(`https://api.themoviedb.org/3/person/?api_key=${process.env.REACT_APP_API}&append_to_response=credits`);
+    
+    setContent(data.results);
+    console.log(data)
+  }
   useEffect(()=>{
-      //bring to top of page
-    fetchSearch();
+    //bring to top of page
+    window.scrollTo(0, 0);
+    
   },[searchInput])
 
 

@@ -1,0 +1,88 @@
+.MovieModal__landscape {
+    object-fit: contain;
+    border-radius: 10px;
+  }
+  
+  .MovieModal__portrait {
+    display: none;
+    object-fit: contain;
+    border-radius: 10px;
+  }
+  
+  .tagline {
+    padding-bottom: 10px;
+    align-self: center;
+  }
+  
+  .MovieModal {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    scrollbar-width: none;
+  }
+  
+  .MovieModal::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .MovieModal__about {
+    padding: 10px;
+    width: 95%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    font-family: "Roboto", sans-serif;
+    justify-content: space-evenly;
+    font-weight: 300;
+  }
+  
+  .MovieModal__title {
+    height: 12%;
+    font-size: 5vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .MovieModal__description {
+    display: flex;
+    height: 40%;
+    overflow-y: scroll;
+    padding: 15px;
+    border-radius: 20px;
+    box-shadow: inset 0 0 5px #000000;
+    text-align: justify;
+  }
+  
+  .MovieModal__description::-webkit-scrollbar {
+    display: none;
+  }
+  
+  @media (min-width: 835px) {
+    .MovieModal__landscape {
+      display: none;
+    }
+    .MovieModal__portrait {
+      display: flex;
+      width: 38%;
+    }
+    .MovieModal {
+      flex-direction: row;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+    .MovieModal__about {
+      width: 58%;
+      padding: 0;
+      height: 100%;
+    }
+    .MovieModal__title {
+      font-size: 3.5vw;
+    }
+    .MovieModal__description {
+      font-size: 22px;
+    }
+  }

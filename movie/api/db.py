@@ -12,7 +12,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://'+db_user+':pgadmin4@local
 engine='postgresql://'+db_user+':pgadmin4@localhost/fyp'
 db=SQLAlchemy(app)
 
-app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY')  # Change this!
+app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY')  
 jwt = JWTManager(app)
 
 #many to many bidirectional relationship

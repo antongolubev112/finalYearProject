@@ -1,11 +1,13 @@
 .SingleMovie {
   display: flex;
   flex-direction: column;
+  height: 400px;
   width: 200px;
   padding: 5px;
   margin: 5px 0;
+  margin-top: 10px;
   background-color: #282c34;
-  border-radius: 10px;
+  border-radius: 5px;
   position: relative;
 }
 
@@ -37,6 +39,6 @@
   justify-content: space-between;
   padding-bottom: 3px;
   padding: 0 2px;
-  padding-bottom: 3px;
+
   color:white;
 }
