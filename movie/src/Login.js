@@ -13,6 +13,7 @@ export const Login = () => {
 
   //access token
   const token = sessionStorage.getItem("token");
+  //const IsLoggedIn= useContext();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -60,7 +61,7 @@ export const Login = () => {
     setEmail(" ");
     setPassword("");
   },[]);
-
+    
   return (
     <div>
       {/* If token exists and is not empty/or undefined then say you are logged in

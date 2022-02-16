@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./navbar.css";
 import SearchIcon from "@material-ui/icons/Search";
 import { Link } from "react-router-dom";
 
 function Header() {
+  const [token, setToken] = useState(sessionStorage.getItem("token"));
+
+  useEffect(()=>{
+  
+  },[token]);
+  
+
   return (
     <div className="navbar">
       {/* Logo */}
@@ -43,8 +50,9 @@ function Header() {
       </Link>
       <Link to="/login" style={{ textDecoration: "none" }} color="white">
         <div className="navbar__option">
-          <span className="navbar__optionLineOne">Hello Guest</span>
-          <span className="navbar__optionLineTwo">Sign in</span>
+          {token && token!=undefined && token!="" ?(
+            <span className="navbar__optionLineTwo">Sign out</span>
+          ) : ( <span className="navbar__optionLineTwo">Sign in</span>)}
         </div>
       </Link>
 
