@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import "./login.css";
-import { Link , Navigate} from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
 
 export const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [registerError, setRegisterError]= useState("")
+  const [registerError, setRegisterError]= useState("");
+  const navigate = useNavigate();
 
-  const handleRegister = async () => {
+  const handleRegister = async (e) => {
+    //prevent reloading of page
+    e.preventDefault();
     const options = {
       method: "POST",
       // tell backend that this data will be json because that's what its expecting
@@ -28,7 +31,7 @@ export const Register = () => {
       const response = await fetch("/register", options);
       const json = await response.json();
       if (response.status === 200) {
-       <Navigate to={'/'} />;
+        navigate("/login");
         return json;
       }
       else {

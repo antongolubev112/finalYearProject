@@ -39,10 +39,9 @@ const Genres = ({ selectedGenres, setSelectedGenres, genres, setGenres }) => {
       {selectedGenres &&
         selectedGenres.map((genre) => (
           <Chip
-            YES
             label={genre.name}
             style={{ margin: 3 }}
-            size="large"
+            size="small"
             color="primary"
             key={genre.id}
             clickable
@@ -56,7 +55,7 @@ const Genres = ({ selectedGenres, setSelectedGenres, genres, setGenres }) => {
           <Chip
             label={genre.name}
             style={{ margin: 3 }}
-            size="large"
+            size="small"
             key={genre.id}
             clickable
             onClick={() => selectGenre(genre)}

@@ -9,6 +9,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import axios from "axios";
 import { SingleMovie } from "./SingleMovie";
 
+
 const Search = () => {
   const [type, setType] = useState(0);  
   const [searchInput,setSearchInput]=useState("");
@@ -30,16 +31,10 @@ const Search = () => {
     console.log(data)
   }
 
-  const fetchActor= async () =>{
-    const {data} = await axios.get(`https://api.themoviedb.org/3/person/?api_key=${process.env.REACT_APP_API}&append_to_response=credits`);
-    
-    setContent(data.results);
-    console.log(data)
-  }
   useEffect(()=>{
     //bring to top of page
     window.scrollTo(0, 0);
-    
+    fetchSearch();
   },[searchInput])
 
 

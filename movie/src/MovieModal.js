@@ -10,6 +10,8 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import YouTubeIcon from "@material-ui/icons/YouTube";
 import "./movieModal.css";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { IconButton } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -32,8 +34,8 @@ const useStyles = makeStyles((theme) => ({
 export default function BasicModal({ children, id }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [content, setContent] = useState();
-  const [video, setVideo] = useState();
+  const [movie, setmovie] = useState();
+  const [trailer, setTrailer] = useState();
 
   const handleOpen = () => {
     setOpen(true);
@@ -48,7 +50,7 @@ export default function BasicModal({ children, id }) {
       `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API}`
     );
 
-    setContent(data);
+    setmovie(data);
   };
 
   const fetchVideo = async () => {
@@ -56,7 +58,7 @@ export default function BasicModal({ children, id }) {
       `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${process.env.REACT_APP_API}`
     );
 
-    setVideo(data.results[0]?.key);
+    setTrailer(data.results[0]?.key);
   };
 
   useEffect(() => {
@@ -64,7 +66,7 @@ export default function BasicModal({ children, id }) {
     fetchVideo();
 
     return () => {
-      setContent({});
+      setmovie({});
     };
   }, []);
 
@@ -91,34 +93,37 @@ export default function BasicModal({ children, id }) {
         }}
       >
         <Fade in={open}>
-          {content && (
+          {movie && (
             <div className={classes.paper}>
               <div className="MovieModal">
                 <img
-                  src={`${img_500}/${content.poster_path}`}
-                  alt={content.title}
+                  src={`${img_500}/${movie.poster_path}`}
+                  alt={movie.title}
                   className="MovieModal__portrait"
                 />
                 <img
-                  src={`${img_500}/${content.backdrop_path}`}
-                  alt={content.title}
+                  src={`${img_500}/${movie.backdrop_path}`}
+                  alt={movie.title}
                   className="MovieModal__landscape"
                 />
                 <div className="MovieModal__about">
                   <span className="MovieModal__title">
-                    {content.title} (
+                    {movie.title} (
                     {(
-                      content.release_date ||
+                      movie.release_date ||
                       "-----"
                     ).substring(0, 4)}
                     )
+                    <IconButton color="secondary" aria-label="add an alarm">
+                      <FavoriteBorderIcon />
+                    </IconButton>
                   </span>
-                  {content.tagline && (
-                    <i className="tagline">{content.tagline}</i>
+                  {movie.tagline && (
+                    <i className="tagline">{movie.tagline}</i>
                   )}
 
                   <span className="MovieModal__description">
-                    {content.overview}
+                    {movie.overview}
                   </span>
 
                   <Button
@@ -126,7 +131,7 @@ export default function BasicModal({ children, id }) {
                     startIcon={<YouTubeIcon />}
                     color="secondary"
                     target="__blank"
-                    href={`https://www.youtube.com/watch?v=${video}`}
+                    href={`https://www.youtube.com/watch?v=${trailer}`}
                   >
                     Watch the Trailer
                   </Button>

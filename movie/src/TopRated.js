@@ -63,6 +63,7 @@ export const TopRated = () => {
     }
     
   },[genresForApi]);
+  
   return (
     <div>
       <span className="MovieList__Title"> </span>
