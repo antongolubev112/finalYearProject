@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./navbar.css";
-import SearchIcon from "@material-ui/icons/Search";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectUser } from "./state/userSlice";
 
 function Header() {
-  const [token, setToken] = useState(sessionStorage.getItem("token"));
+  const user=useSelector(selectUser);
 
-  useEffect(()=>{
-  
-  },[token]);
   
 
   return (
@@ -50,7 +48,7 @@ function Header() {
       </Link>
       <Link to="/login" style={{ textDecoration: "none" }} color="white">
         <div className="navbar__option">
-          {token && token!=undefined && token!="" ?(
+          {user ?(
             <span className="navbar__optionLineTwo">Sign out</span>
           ) : ( <span className="navbar__optionLineTwo">Sign in</span>)}
         </div>

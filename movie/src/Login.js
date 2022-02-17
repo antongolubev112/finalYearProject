@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import {login} from "./state/userSlice";
 import "./login.css";
 
 export const Login = () => {
@@ -9,7 +11,7 @@ export const Login = () => {
   const [passError, setPassError] = useState("");
   const [loginError, setLoginError] = useState("");
   const navigate = useNavigate();
-  // const [nameError,setNameError]= useState('');
+  const dispatch= useDispatch();
 
   //access token
   const token = sessionStorage.getItem("token");
@@ -37,11 +39,22 @@ export const Login = () => {
         const json = await response.json();
         console.log(response);
         if (response.status === 200) {
-          console.log("retrieved token from backend: ", json.access_token);
+          console.log("retrieved token from backend: ", json.token);
+          console.log("User details: ",json.fname," ",json.lname," ",json.email)
           sessionStorage.setItem("token", json.access_token);
           setEmail("");
           setPassword("");
           navigate("/");
+
+          //dispatch state to redux
+          dispatch(
+            login({
+              fname:json.fname,
+              lname:json.lname,
+              email:json.email,
+              loggedIn: true,
+          }));
+
           return json;
         }
         else{

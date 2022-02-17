@@ -12,7 +12,10 @@ import Navbar from "./Navbar"
 import { Discover } from "./Discover";
 import Search from "./Search"
 
+
 function App() {
+  
+
   return (
     <>
       <Router>

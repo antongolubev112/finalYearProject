@@ -7,26 +7,11 @@ from flask import jsonify,request,json
 from flask_jwt_extended import create_access_token
 import bcrypt
 import os
+from queries import check_user,get_user_details,get_password
+from serializers import user_serializer, movie_serializer
 
+#generate salt for bcrypt
 salt=bcrypt.gensalt()
-
-def check_user(email):
-    exists = db.session.query(User.user_Id).filter_by(email=email).first() is not None
-    return exists
-
-def movie_serializer(movie):
-        return{
-            'id':movie.movieId,
-            'title':movie.title,
-            'posterUrl':movie.posterUrl,
-            'rtScore':movie.rtScore,
-            'imdbScore':movie.imdbScore,
-            'rating':movie.rating,
-            'runtime':movie.runtime,
-            'studio':movie.studio,
-            'boxOffice':movie.boxOffice,
-            'releaseDate':movie.releaseDate
-        }
 
 @app.route('/movies',methods=['GET'])
 def index():
@@ -37,8 +22,10 @@ def index():
 # create_access_token() function is used to actually generate the JWT.
 @app.route('/token', methods=['POST'])
 def create_auth_token():
+    #get email from the request data
     email = request.json.get("email")
 
+    #get password from the request data
     password = request.json.get("password",None)
     
     #query db to see if a user id that has the passed email exists
@@ -49,8 +36,11 @@ def create_auth_token():
         print("User does not exist")
         return jsonify({"msg": "An account with this email does not exist!"}), 401
 
-    #check
-    hash=db.session.query(User.password).filter_by(email=email).one()
+    user= get_user_details(email)
+    
+    #retrieve hash password from db
+    hash=get_password(email)
+
     print("Hash: ", hash)
 
     #if given password does not match hash password on db then return error
@@ -59,12 +49,17 @@ def create_auth_token():
     if not bcrypt.checkpw(password.encode('utf-8'),hash[0]):
         print("Password is wrong")
         return jsonify({"msg": "Incorrect password!"}), 401
-        
-    #print("Salt",bcrypt.gensalt(12))
+    
 
+    #create access token
     access_token = create_access_token(identity=email)
+    
     print("token: "+access_token)
-    return jsonify(access_token=access_token)
+
+    #serialize data into json format and append the access token onto it
+    data=user_serializer(user,access_token)
+    
+    return jsonify(data)
 
 @app.route('/register',methods=['POST'])
 def register():
