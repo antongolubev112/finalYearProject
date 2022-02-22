@@ -34,8 +34,10 @@ const useStyles = makeStyles((theme) => ({
 export default function BasicModal({ children, id }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [cast, setCast] = useState();
   const [movie, setmovie] = useState();
   const [trailer, setTrailer] = useState();
+  const token = sessionStorage.getItem("token");
 
   const handleOpen = () => {
     setOpen(true);
@@ -53,6 +55,14 @@ export default function BasicModal({ children, id }) {
     setmovie(data);
   };
 
+  const fetchCast= async () => {
+    const { data } = await axios.get(
+      `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_API}`
+    );
+
+    setCast(data);
+  }
+
   const fetchVideo = async () => {
     const { data } = await axios.get(
       `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${process.env.REACT_APP_API}`
@@ -61,9 +71,41 @@ export default function BasicModal({ children, id }) {
     setTrailer(data.results[0]?.key);
   };
 
+  const likeMovie = async (e)=>{
+    const options = {
+      method: "POST",
+      // tell backend that this data will be json because that's what its expecting
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization":"Bearer "+token
+      },
+      //convert email and password to a json string
+      body: JSON.stringify({
+        id: movie.id,
+        title: movie.title,
+        overview: movie.overview,
+        keywords: movie.keywords,
+        cast:cast.cast,
+        crew:cast.crew
+      }),
+    };
+    try {
+      const response = await fetch("/like", options);
+      const json = await response.json();
+      if (response.status === 200) {
+        return json;
+      }
+      console.log(json);
+    } catch (error) {
+      //log error
+      console.error("There was an error: ", error);
+    }
+  }
+
   useEffect(() => {
     fetchData();
     fetchVideo();
+    //fetchCast();
 
     return () => {
       setmovie({});
@@ -114,7 +156,7 @@ export default function BasicModal({ children, id }) {
                       "-----"
                     ).substring(0, 4)}
                     )
-                    <IconButton color="secondary" aria-label="add an alarm">
+                    <IconButton onClick={(e)=>{likeMovie(e)}} color="secondary" aria-label="add an alarm">
                       <FavoriteBorderIcon />
                     </IconButton>
                   </span>

@@ -115,6 +115,17 @@ def register():
 
     return{'201': 'user created successfully'}
 
+@app.route('/like',methods=['POST'])
+def add_like():
+    print("In api.like()")
+
+    #convert to python dictionary 
+    request_data = json.loads(request.data)
+    print("loaded json")
+    
+    return 
+
+
 @app.route('/movie/<int:id>')
 def show_movie(id):
     #get movie from database based on id number

@@ -29,6 +29,7 @@ class User(db.Model):
     lname=db.Column(db.String, nullable= False)
     email= db.Column(db.String, unique=True, nullable=False)
     password= db.Column(db.LargeBinary, nullable=False)
+    likes = db.relationship("Likes", back_populates="users")
 
 class Movie(db.Model):
     __tablename__="movies"
@@ -78,6 +79,24 @@ class Genre(db.Model):
         self.name=name
 
 
+class Likes(db.Model):
+    __tablename__="Likes"
+    movieId=db.Column(db.Integer,unique=True, primary_key=True)
+    title=db.Column(db.String, nullable= False)
+    overview=db.Column(db.String, nullable= False)
+    keywords= db.Column(db.String, unique=True, nullable=False)
+    cast= db.Column(db.String, nullable=False)
+    crew= db.Column(db.String,nullable= False)
+
+    user_id=db.Column(db.Integer,ForeignKey('users.user_Id'))
+
+    def __init__(self, movieId, title, overview, keywords, cast, crew ):
+        self.movieId = movieId
+        self.title = title
+        self.overview = overview
+        self.keywords = keywords
+        self.cast = cast
+        self.crew = crew
 
 if __name__=='__main__':
     app.run(debug=True)
