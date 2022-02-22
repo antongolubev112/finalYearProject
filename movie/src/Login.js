@@ -15,7 +15,6 @@ export const Login = () => {
 
   //access token
   const token = sessionStorage.getItem("token");
-  //const IsLoggedIn= useContext();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -52,6 +51,7 @@ export const Login = () => {
               fname:json.fname,
               lname:json.lname,
               email:json.email,
+              token:json.token,
               loggedIn: true,
           }));
 

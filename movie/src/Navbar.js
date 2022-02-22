@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import "./navbar.css";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "./state/userSlice";
+import { logout } from "./state/userSlice";
 
 function Header() {
-  const user=useSelector(selectUser);
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
 
-  
+  const handleLogout = (e) => {
+    dispatch(logout());
+  };
 
+  useEffect(() => {}, [user]);
   return (
     <div className="navbar">
       {/* Logo */}
@@ -20,7 +25,7 @@ function Header() {
       </Link>
 
       <div className="navbar__buttons">
-      <Link to="/" style={{ textDecoration: "none" }} color="white">
+        <Link to="/" style={{ textDecoration: "none" }} color="white">
           <div className="navbar__option">
             <span className="navbar__optionLineTwo">All Movies</span>
           </div>
@@ -41,18 +46,28 @@ function Header() {
         </div>
       </div>
       <Link to="/search" style={{ textDecoration: "none" }} color="white">
-      <div className="navbar__option">
-        {/* Search icon */}
-        <span className="navbar__optionLineTwo">Search</span>
-      </div>
-      </Link>
-      <Link to="/login" style={{ textDecoration: "none" }} color="white">
         <div className="navbar__option">
-          {user ?(
-            <span className="navbar__optionLineTwo">Sign out</span>
-          ) : ( <span className="navbar__optionLineTwo">Sign in</span>)}
+          {/* Search icon */}
+          <span className="navbar__optionLineTwo">Search</span>
         </div>
       </Link>
+
+      {user ? (
+        <div className="navbar__option">
+          <span
+            onClick={(e) => handleLogout(e)}
+            className="navbar__optionLineTwo"
+          >
+            Sign out
+          </span>
+        </div>
+      ) : (
+        <Link to="/login" style={{ textDecoration: "none" }} color="white">
+          <div className="navbar__option">
+            <span className="navbar__optionLineTwo">Sign in</span>
+          </div>
+        </Link>
+      )}
 
       <div className="navbar__option">
         <span className="navbar__optionLineOne">Your</span>

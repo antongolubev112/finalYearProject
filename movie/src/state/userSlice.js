@@ -14,6 +14,7 @@ export const userSlice = createSlice({
             state.user= action.payload;
         },
         logout: (state)=>{
+            sessionStorage.removeItem("token");
             state.user=null;
         },
     },
