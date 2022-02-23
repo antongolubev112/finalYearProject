@@ -37,7 +37,8 @@ export default function BasicModal({ children, id }) {
   const [cast, setCast] = useState();
   const [movie, setmovie] = useState();
   const [trailer, setTrailer] = useState();
-  const token = sessionStorage.getItem("token");
+  const [token,setToken]=useState();
+  const [keyword,setKeywords]= useState();
 
   const handleOpen = () => {
     setOpen(true);
@@ -53,6 +54,7 @@ export default function BasicModal({ children, id }) {
     );
 
     setmovie(data);
+    //console.log(data);
   };
 
   const fetchCast= async () => {
@@ -71,7 +73,21 @@ export default function BasicModal({ children, id }) {
     setTrailer(data.results[0]?.key);
   };
 
+
   const likeMovie = async (e)=>{
+    const[cast,keywords]= await Promise.all([
+      axios.get(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_API}`),
+      axios.get(`https://api.themoviedb.org/3/movie/${id}/keywords?api_key=${process.env.REACT_APP_API}`)
+    ])
+
+    setCast(cast);
+    setKeywords(keywords);
+    console.log(cast);
+    console.log(keywords)
+
+
+
+    console.log("token ",token)
     const options = {
       method: "POST",
       // tell backend that this data will be json because that's what its expecting
@@ -84,9 +100,9 @@ export default function BasicModal({ children, id }) {
         id: movie.id,
         title: movie.title,
         overview: movie.overview,
-        keywords: movie.keywords,
-        cast:cast.cast,
-        crew:cast.crew
+        keywords: keywords.data.keywords,
+        cast:cast.data.cast,
+        crew:cast.data.crew
       }),
     };
     try {
@@ -106,7 +122,8 @@ export default function BasicModal({ children, id }) {
     fetchData();
     fetchVideo();
     //fetchCast();
-
+    
+    setToken(sessionStorage.getItem("token"));
     return () => {
       setmovie({});
     };

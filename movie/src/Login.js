@@ -40,7 +40,7 @@ export const Login = () => {
         if (response.status === 200) {
           console.log("retrieved token from backend: ", json.token);
           console.log("User details: ",json.fname," ",json.lname," ",json.email)
-          sessionStorage.setItem("token", json.access_token);
+          sessionStorage.setItem("token", json.token);
           setEmail("");
           setPassword("");
           navigate("/");

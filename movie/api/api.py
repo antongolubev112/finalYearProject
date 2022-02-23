@@ -1,13 +1,13 @@
 from re import U
 from sqlalchemy.sql.expression import false
 from sqlalchemy.sql.functions import user
-from db import Movie,app, User, db
+from db import Movie, app, User, db, Likes
 from sqlalchemy import func
 from flask import jsonify,request,json
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import bcrypt
 import os
-from queries import check_user,get_user_details,get_password
+from queries import check_user,get_user_details,get_password,checkLikes
 from serializers import user_serializer, movie_serializer
 
 #generate salt for bcrypt
@@ -116,14 +116,48 @@ def register():
     return{'201': 'user created successfully'}
 
 @app.route('/like',methods=['POST'])
+#decorator states that you need a jwt token to access this api endpoint
+@jwt_required()
 def add_like():
     print("In api.like()")
-
     #convert to python dictionary 
     request_data = json.loads(request.data)
-    print("loaded json")
+    print(request.headers)
+    print(request_data)
+
+    if request_data['id'] is None:
+        return jsonify({"msg": "INVALID MOVIE"}), 401
     
-    return 
+
+    
+    #Gets email of user from the jwt token from the payload of the token.
+    #The email was specified as the identity when it was created
+    email=get_jwt_identity()
+    print("email :",email)
+
+    #fetch user details using the email
+    user=get_user_details(email)
+    print("User id",user.user_Id)
+    if checkLikes(request_data['id'],user.user_Id) :
+        return jsonify({"msg": "Movie is already liked"}), 401
+
+    request_data['keywords']=list(map(lambda x: json.dumps(x), request_data['keywords']))
+    request_data['cast']=list(map(lambda x: json.dumps(x), request_data['cast']))
+    request_data['crew']=list(map(lambda x: json.dumps(x), request_data['crew']))
+
+    like=Likes(movieId=request_data['id'],
+        title=request_data['title'],
+        overview=request_data['overview'],
+        keywords=request_data['keywords'],
+        cast=request_data['cast'],
+        crew=request_data['crew'],
+        user_id=user.user_Id
+    )
+
+    db.session.add(like)
+    db.session.commit()
+    
+    return{'201': 'added like successfully'}
 
 
 @app.route('/movie/<int:id>')
