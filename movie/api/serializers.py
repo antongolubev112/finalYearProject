@@ -20,3 +20,8 @@ def user_serializer(user,token):
         'email':user.email,
         'token':token
     }
+
+def like_serializer(like):
+    return{
+        'id':like.movieId,
+    }

@@ -10,7 +10,8 @@ import { ShowMovie } from "./ShowMovie";
 import { TopRated } from "./TopRated";
 import Navbar from "./Navbar"
 import { Discover } from "./Discover";
-import Search from "./Search"
+import Search from "./Search";
+import {LikedMovies} from './LikedMovies'
 
 
 function App() {
@@ -26,8 +27,8 @@ function App() {
               <Route path="/login" element={<Login />}></Route>
               <Route path="/top" element={<TopRated/>}></Route>
               <Route path="/register" element={<Register />}></Route>
-              <Route path="/:id" element={<ShowMovie />}></Route>
               <Route path="/search" element={<Search/>}></Route>
+              <Route path="/likes" element={<LikedMovies/>}></Route>
             </Routes>
           </div>
       </Router>

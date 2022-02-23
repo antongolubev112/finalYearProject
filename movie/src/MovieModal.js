@@ -10,7 +10,8 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import YouTubeIcon from "@material-ui/icons/YouTube";
 import "./movieModal.css";
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import { IconButton } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
@@ -34,11 +35,10 @@ const useStyles = makeStyles((theme) => ({
 export default function BasicModal({ children, id }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [cast, setCast] = useState();
   const [movie, setmovie] = useState();
   const [trailer, setTrailer] = useState();
-  const [token,setToken]=useState();
-  const [keyword,setKeywords]= useState();
+  const [token, setToken] = useState();
+  const [liked, setLiked] = useState(false);
 
   const handleOpen = () => {
     setOpen(true);
@@ -57,14 +57,6 @@ export default function BasicModal({ children, id }) {
     //console.log(data);
   };
 
-  const fetchCast= async () => {
-    const { data } = await axios.get(
-      `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_API}`
-    );
-
-    setCast(data);
-  }
-
   const fetchVideo = async () => {
     const { data } = await axios.get(
       `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${process.env.REACT_APP_API}`
@@ -73,27 +65,31 @@ export default function BasicModal({ children, id }) {
     setTrailer(data.results[0]?.key);
   };
 
-
-  const likeMovie = async (e)=>{
-    const[cast,keywords]= await Promise.all([
-      axios.get(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_API}`),
-      axios.get(`https://api.themoviedb.org/3/movie/${id}/keywords?api_key=${process.env.REACT_APP_API}`)
-    ])
-
-    setCast(cast);
-    setKeywords(keywords);
+  const likeMovie = async (e) => {
+    if (liked == false) {
+      setLiked(true);
+    }
+    else{
+      setLiked(false);
+    }
+    const [cast, keywords] = await Promise.all([
+      axios.get(
+        `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_API}`
+      ),
+      axios.get(
+        `https://api.themoviedb.org/3/movie/${id}/keywords?api_key=${process.env.REACT_APP_API}`
+      ),
+    ]);
     console.log(cast);
-    console.log(keywords)
+    console.log(keywords);
 
-
-
-    console.log("token ",token)
+    console.log("token ", token);
     const options = {
       method: "POST",
       // tell backend that this data will be json because that's what its expecting
       headers: {
         "Content-Type": "application/json",
-        "Authorization":"Bearer "+token
+        Authorization: "Bearer " + token,
       },
       //convert email and password to a json string
       body: JSON.stringify({
@@ -101,8 +97,8 @@ export default function BasicModal({ children, id }) {
         title: movie.title,
         overview: movie.overview,
         keywords: keywords.data.keywords,
-        cast:cast.data.cast,
-        crew:cast.data.crew
+        cast: cast.data.cast,
+        crew: cast.data.crew,
       }),
     };
     try {
@@ -116,18 +112,22 @@ export default function BasicModal({ children, id }) {
       //log error
       console.error("There was an error: ", error);
     }
-  }
+  };
 
   useEffect(() => {
     fetchData();
     fetchVideo();
     //fetchCast();
-    
+
     setToken(sessionStorage.getItem("token"));
     return () => {
       setmovie({});
     };
   }, []);
+
+  // useEffect(()=>{
+  //   handleIcon();
+  // })
 
   return (
     <div>
@@ -168,18 +168,18 @@ export default function BasicModal({ children, id }) {
                 <div className="MovieModal__about">
                   <span className="MovieModal__title">
                     {movie.title} (
-                    {(
-                      movie.release_date ||
-                      "-----"
-                    ).substring(0, 4)}
-                    )
-                    <IconButton onClick={(e)=>{likeMovie(e)}} color="secondary" aria-label="add an alarm">
-                      <FavoriteBorderIcon />
+                    {(movie.release_date || "-----").substring(0, 4)})
+                    <IconButton
+                      onClick={(e) => {
+                        likeMovie(e);
+                      }}
+                      color="secondary"
+                      aria-label="add an alarm"
+                    >{liked? <FavoriteRoundedIcon/> :
+                      <FavoriteBorderIcon />}
                     </IconButton>
                   </span>
-                  {movie.tagline && (
-                    <i className="tagline">{movie.tagline}</i>
-                  )}
+                  {movie.tagline && <i className="tagline">{movie.tagline}</i>}
 
                   <span className="MovieModal__description">
                     {movie.overview}

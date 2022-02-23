@@ -7,8 +7,8 @@ from flask import jsonify,request,json
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import bcrypt
 import os
-from queries import check_user,get_user_details,get_password,checkLikes
-from serializers import user_serializer, movie_serializer
+from queries import check_user,get_user_details,get_password,checkLikes,get_all_likes
+from serializers import user_serializer, movie_serializer,like_serializer
 
 #generate salt for bcrypt
 salt=bcrypt.gensalt()
@@ -138,8 +138,10 @@ def add_like():
     #fetch user details using the email
     user=get_user_details(email)
     print("User id",user.user_Id)
+
+    #if like already exists then return an error
     if checkLikes(request_data['id'],user.user_Id) :
-        return jsonify({"msg": "Movie is already liked"}), 401
+        return jsonify({"msg": "Movie is already liked"}), 400
 
     request_data['keywords']=list(map(lambda x: json.dumps(x), request_data['keywords']))
     request_data['cast']=list(map(lambda x: json.dumps(x), request_data['cast']))
@@ -165,6 +167,21 @@ def show_movie(id):
     #get movie from database based on id number
     print(id)
     return jsonify([*map(movie_serializer,Movie.query.filter_by(movieId=id))])
+
+@app.route('/getLikes',methods=['POST'])
+@jwt_required()
+def get_likes():
+    email=get_jwt_identity()
+    user=get_user_details(email)
+    likes=get_all_likes(user.user_Id)
+    
+    likes_list=[]
+
+    for x in likes:
+        likes_list.append(like_serializer(x))
+
+    print(likes_list)
+    return jsonify(likes_list)
 
 if __name__=='__main__':
     app.run(debug=True)

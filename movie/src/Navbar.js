@@ -36,10 +36,18 @@ function Header() {
             <span className="navbar__optionLineTwo">Top Rated</span>
           </div>
         </Link>
-
+        
+        {user? (
+        <Link to="/likes" style={{ textDecoration: "none" }} color="white">
+          <div className="navbar__option">
+            <span className="navbar__optionLineTwo">Liked Movies</span>
+          </div>
+        </Link>
+        ):( <Link to="/login" style={{ textDecoration: "none" }} color="white">
         <div className="navbar__option">
           <span className="navbar__optionLineTwo">Liked Movies</span>
         </div>
+      </Link>) }
 
         <div className="navbar__option">
           <span className="navbar__optionLineTwo">Recommendations</span>

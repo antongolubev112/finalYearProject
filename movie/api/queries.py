@@ -31,3 +31,7 @@ def checkLikes(movie_id, user_id):
 
     print("exists: ",exists)
     return exists
+
+
+def get_all_likes(user_id):
+    return Likes.query.filter_by(user_id=user_id).all()
