@@ -13,6 +13,8 @@ import "./movieModal.css";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import { IconButton } from "@mui/material";
+import { useSelector } from "react-redux";
+import { selectUser } from "./state/userSlice";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -39,6 +41,7 @@ export default function BasicModal({ children, id }) {
   const [trailer, setTrailer] = useState();
   const [token, setToken] = useState();
   const [liked, setLiked] = useState(false);
+  const user = useSelector(selectUser);
 
   const handleOpen = () => {
     setOpen(true);
@@ -114,10 +117,16 @@ export default function BasicModal({ children, id }) {
     }
   };
 
+  //check if the movie is in the liked movies state
+  const checkLikes=()=>{
+    if(user.likes.find(x => x.id == id)){
+      setLiked(true);
+    }
+  };
+
   useEffect(() => {
     fetchData();
     fetchVideo();
-    //fetchCast();
 
     setToken(sessionStorage.getItem("token"));
     return () => {
@@ -125,9 +134,11 @@ export default function BasicModal({ children, id }) {
     };
   }, []);
 
-  // useEffect(()=>{
-  //   handleIcon();
-  // })
+  useEffect(()=>{
+    if(user!=null){
+      checkLikes();
+    }
+  },[user])
 
   return (
     <div>

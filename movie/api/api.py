@@ -2,7 +2,7 @@ from re import U
 from sqlalchemy.sql.expression import false
 from sqlalchemy.sql.functions import user
 from db import Movie, app, User, db, Likes
-from sqlalchemy import func
+from sqlalchemy import func,delete
 from flask import jsonify,request,json
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import bcrypt
@@ -128,8 +128,6 @@ def add_like():
     if request_data['id'] is None:
         return jsonify({"msg": "INVALID MOVIE"}), 401
     
-
-    
     #Gets email of user from the jwt token from the payload of the token.
     #The email was specified as the identity when it was created
     email=get_jwt_identity()
@@ -141,7 +139,9 @@ def add_like():
 
     #if like already exists then return an error
     if checkLikes(request_data['id'],user.user_Id) :
-        return jsonify({"msg": "Movie is already liked"}), 400
+        Likes.query.filter_by(movieId=request_data['id']).delete()
+        print("deleted movie")
+        return jsonify({"msg": "Movie unliked"}), 200
 
     request_data['keywords']=list(map(lambda x: json.dumps(x), request_data['keywords']))
     request_data['cast']=list(map(lambda x: json.dumps(x), request_data['cast']))

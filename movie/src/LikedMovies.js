@@ -5,6 +5,7 @@ import { selectUser } from "./state/userSlice";
 import { useEffect, useState } from "react";
 import "./movielist.css"
 import { SingleMovie } from "./SingleMovie";
+import userLikesService from "./userLikesService";
 
 export const LikedMovies = () => {
   const user = useSelector(selectUser);
@@ -37,6 +38,7 @@ export const LikedMovies = () => {
   };
 
   const fetchMovies = async () => {
+    //iterate through likes object to make concurrent requests
     const { data } = axios
       .all(
         likes.map((u) =>
@@ -45,6 +47,7 @@ export const LikedMovies = () => {
           )
         )
       )
+      //take the result of all of those requests and set it to movies
       .then(
         axios.spread((...res) => {
           console.log(res);
@@ -54,17 +57,18 @@ export const LikedMovies = () => {
     //console.log("fetch movies called");
   };
 
+  //if user is logged in then fetch the ids of the liked movies from postgres
   useEffect(() => {
     if (user != null) {
-      fetchLikes();
+      userLikesService(token).then((res)=>setLikes(res));
     }
     //setToken(sessionStorage.getItem("token"));
   }, []);
 
+  //if likes isn't null then fetch movie details from TMDB.
   useEffect(() => {
     if (likes != null) {
       fetchMovies();
-      console.log("movies",movies);
     }
   }, [likes,user]);
 

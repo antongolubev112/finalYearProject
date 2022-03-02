@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import {login} from "./state/userSlice";
 import "./login.css";
+import userLikesService from "./userLikesService";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -41,10 +42,12 @@ export const Login = () => {
           console.log("retrieved token from backend: ", json.token);
           console.log("User details: ",json.fname," ",json.lname," ",json.email)
           sessionStorage.setItem("token", json.token);
+          const likes= await userLikesService(json.token);
+          console.log("likes: ",likes)
           setEmail("");
           setPassword("");
           navigate("/");
-
+          
           //dispatch state to redux
           dispatch(
             login({
@@ -52,6 +55,7 @@ export const Login = () => {
               lname:json.lname,
               email:json.email,
               token:json.token,
+              likes:likes,
               loggedIn: true,
           }));
 
