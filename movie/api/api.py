@@ -7,7 +7,7 @@ from flask import jsonify,request,json
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import bcrypt
 import os
-from queries import check_user,get_user_details,get_password,checkLikes,get_all_likes
+from queries import check_user,get_user_details,get_password,checkLikes,get_all_likes,delete_like
 from serializers import user_serializer, movie_serializer,like_serializer
 
 #generate salt for bcrypt
@@ -139,8 +139,7 @@ def add_like():
 
     #if like already exists then return an error
     if checkLikes(request_data['id'],user.user_Id) :
-        Likes.query.filter_by(movieId=request_data['id']).delete()
-        print("deleted movie")
+        delete_like(request_data['id'],user.user_Id)
         return jsonify({"msg": "Movie unliked"}), 200
 
     request_data['keywords']=list(map(lambda x: json.dumps(x), request_data['keywords']))

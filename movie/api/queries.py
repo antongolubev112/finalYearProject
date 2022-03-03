@@ -35,3 +35,13 @@ def checkLikes(movie_id, user_id):
 
 def get_all_likes(user_id):
     return Likes.query.filter_by(user_id=user_id).all()
+
+def delete_like(id, user_id):
+    Likes.query.filter(
+        (and_(
+            id==Likes.movieId,
+            user_id==user_id)
+        )
+    ).delete()
+    db.session.commit()
+    return 200
