@@ -15,6 +15,8 @@ import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import { IconButton } from "@mui/material";
 import { useSelector } from "react-redux";
 import { selectUser } from "./state/userSlice";
+import { useDispatch } from 'react-redux';
+import {like,unlike} from './state/userSlice';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -42,6 +44,8 @@ export default function BasicModal({ children, id }) {
   const [token, setToken] = useState();
   const [liked, setLiked] = useState(false);
   const user = useSelector(selectUser);
+  const dispatch= useDispatch();
+
 
   const handleOpen = () => {
     setOpen(true);
@@ -71,9 +75,22 @@ export default function BasicModal({ children, id }) {
   const likeMovie = async (e) => {
     if (liked == false) {
       setLiked(true);
+      //update the likes state object in redux
+      dispatch(
+        like({
+          id:id
+        }
+        )
+      )
     }
     else{
       setLiked(false);
+      //update the likes state object in redux
+      dispatch(
+        unlike(
+          id
+        )
+      )
     }
     const [cast, keywords] = await Promise.all([
       axios.get(
@@ -139,6 +156,8 @@ export default function BasicModal({ children, id }) {
       checkLikes();
     }
   },[user])
+
+
 
   return (
     <div>

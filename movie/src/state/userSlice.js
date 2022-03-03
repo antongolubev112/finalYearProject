@@ -17,10 +17,16 @@ export const userSlice = createSlice({
             sessionStorage.removeItem("token");
             state.user=null;
         },
+        unlike:(state,action)=>{
+            state.user.likes=state.user.likes.filter(like => like.id !== action.payload);
+        },
+        like:(state,action)=>{
+            state.user.likes.push(action.payload);
+        }
     },
 });
 
-export const{login,logout}= userSlice.actions;
+export const{login,logout,unlike,like}= userSlice.actions;
 
 export const selectUser= (state)=> state.user.user;
 
