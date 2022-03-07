@@ -1,4 +1,5 @@
 from re import U
+import jwt
 from sqlalchemy.sql.expression import false
 from sqlalchemy.sql.functions import user
 from db import Movie, app, User, db, Likes
@@ -9,6 +10,7 @@ import bcrypt
 import os
 from queries import check_user,get_user_details,get_password,checkLikes,get_all_likes,delete_like
 from serializers import user_serializer, movie_serializer,like_serializer
+from recommender import prepare_likes
 
 #generate salt for bcrypt
 salt=bcrypt.gensalt()
@@ -142,12 +144,14 @@ def add_like():
         delete_like(request_data['id'],user.user_Id)
         return jsonify({"msg": "Movie unliked"}), 200
 
-    request_data['keywords']=list(map(lambda x: json.dumps(x), request_data['keywords']))
-    request_data['cast']=list(map(lambda x: json.dumps(x), request_data['cast']))
-    request_data['crew']=list(map(lambda x: json.dumps(x), request_data['crew']))
+    request_data['keywords']=json.dumps(request_data['keywords'])
+    request_data['cast']=json.dumps(request_data['cast'])
+    request_data['crew']=json.dumps(request_data['crew'])
+    request_data['genres']=json.dumps(request_data['genres'])
 
     like=Likes(movieId=request_data['id'],
         title=request_data['title'],
+        genres=request_data['genres'],
         overview=request_data['overview'],
         keywords=request_data['keywords'],
         cast=request_data['cast'],
@@ -181,6 +185,22 @@ def get_likes():
 
     print(likes_list)
     return jsonify(likes_list)
+
+@app.route('/recommend',methods=['POST'])
+@jwt_required()
+def recommend():
+    email=get_jwt_identity()
+    user=get_user_details(email)
+    likes=get_all_likes(user.user_Id)
+
+    likes_list=[]
+
+    for x in likes:
+        likes_list.append(like_serializer(x))
+
+    print(prepare_likes(likes))
+
+    return{'201': 'test'}
 
 if __name__=='__main__':
     app.run(debug=True)

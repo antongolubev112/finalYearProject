@@ -83,6 +83,7 @@ class Likes(db.Model):
     __tablename__="Likes"
     movieId=db.Column(db.Integer, primary_key=True)
     title=db.Column(db.String, nullable= False)
+    genres=db.Column(db.String, nullable= False)
     overview=db.Column(db.String, nullable= False)
     keywords= db.Column(db.String, nullable=False)
     cast= db.Column(db.String, nullable=False)
@@ -90,9 +91,10 @@ class Likes(db.Model):
 
     user_id=db.Column(db.Integer,ForeignKey('users.user_Id'))
 
-    def __init__(self, movieId, title, overview, keywords, cast, crew,user_id):
+    def __init__(self, movieId, title, genres, overview, keywords, cast, crew,user_id):
         self.movieId = movieId
         self.title = title
+        self.genres= genres
         self.overview = overview
         self.keywords = keywords
         self.cast = cast

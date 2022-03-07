@@ -36,22 +36,26 @@ function Header() {
             <span className="navbar__optionLineTwo">Top Rated</span>
           </div>
         </Link>
-        
-        {user? (
-        <Link to="/likes" style={{ textDecoration: "none" }} color="white">
+
+        {user ? (
+          <Link to="/likes" style={{ textDecoration: "none" }} color="white">
+            <div className="navbar__option">
+              <span className="navbar__optionLineTwo">Liked Movies</span>
+            </div>
+          </Link>
+        ) : (
+          <Link to="/login" style={{ textDecoration: "none" }} color="white">
+            <div className="navbar__option">
+              <span className="navbar__optionLineTwo">Liked Movies</span>
+            </div>
+          </Link>
+        )}
+
+        <Link to="/recommend" style={{ textDecoration: "none" }} color="white">
           <div className="navbar__option">
-            <span className="navbar__optionLineTwo">Liked Movies</span>
+            <span className="navbar__optionLineTwo">Recommendations</span>
           </div>
         </Link>
-        ):( <Link to="/login" style={{ textDecoration: "none" }} color="white">
-        <div className="navbar__option">
-          <span className="navbar__optionLineTwo">Liked Movies</span>
-        </div>
-      </Link>) }
-
-        <div className="navbar__option">
-          <span className="navbar__optionLineTwo">Recommendations</span>
-        </div>
       </div>
       <Link to="/search" style={{ textDecoration: "none" }} color="white">
         <div className="navbar__option">
@@ -77,11 +81,18 @@ function Header() {
         </Link>
       )}
 
-      <div className="navbar__option">
-        <span className="navbar__optionLineOne">Your</span>
+      {user ? (
+        <div className="navbar__option">
+          <span className="navbar__optionLineOne">Hello {user.fname}</span>
+          <span className="navbar__optionLineTwo">Your Account</span>
+        </div>
+      ) : (
+        <div className="navbar__option">
+          <span className="navbar__optionLineOne">Your</span>
 
-        <span className="navbar__optionLineTwo">Account</span>
-      </div>
+          <span className="navbar__optionLineTwo">Account</span>
+        </div>
+      )}
     </div>
   );
 }

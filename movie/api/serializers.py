@@ -21,6 +21,17 @@ def user_serializer(user,token):
         'token':token
     }
 
+def recommender_serializer(like):
+    return{
+        'id':like.movieId,
+        'title':like.title,
+        'genres':like.genres,
+        'overview':like.overview,
+        'keywords':like.keywords,
+        'cast':like.cast,
+        'crew':like.crew
+    }
+
 def like_serializer(like):
     return{
         'id':like.movieId,

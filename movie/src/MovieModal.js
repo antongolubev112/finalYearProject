@@ -115,6 +115,7 @@ export default function BasicModal({ children, id }) {
       body: JSON.stringify({
         id: movie.id,
         title: movie.title,
+        genres: movie.genres,
         overview: movie.overview,
         keywords: keywords.data.keywords,
         cast: cast.data.cast,

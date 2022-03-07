@@ -12,6 +12,7 @@ import Navbar from "./Navbar"
 import { Discover } from "./Discover";
 import Search from "./Search";
 import {LikedMovies} from './LikedMovies'
+import {Recommendations} from './Recommendations'
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
               <Route path="/register" element={<Register />}></Route>
               <Route path="/search" element={<Search/>}></Route>
               <Route path="/likes" element={<LikedMovies/>}></Route>
+              <Route path='/recommend' element={<Recommendations/>}></Route>
             </Routes>
           </div>
       </Router>
