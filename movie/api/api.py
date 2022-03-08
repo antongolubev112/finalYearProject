@@ -11,6 +11,7 @@ import os
 from queries import check_user,get_user_details,get_password,checkLikes,get_all_likes,delete_like,check_df
 from serializers import user_serializer, movie_serializer,like_serializer,recommender_serializer
 from prepare_like import push_like_to_data
+from recommender import recommend_movies
 
 #generate salt for bcrypt
 salt=bcrypt.gensalt()
@@ -204,7 +205,11 @@ def recommend():
     likes_list=[]
 
     for x in likes:
-        push_like_to_data(recommender_serializer(x))
+        likes_list.append(recommender_serializer(x))
+    
+    recommend_movies(likes_list)
+    
+
 
     return{'201': 'test'}
 

@@ -23,15 +23,19 @@ def recommender(liked_movie,similarity_matrix,df):
     
     for i in top_8_movies:
         print(df.iloc[i[0]].title) #out of tupple we want index i.e 0th index
+    return
 
-#df=prepare_data()
-#similarity_matrix=get_similarity_matrix()
-
-if __name__=='__main__':
+def recommend_movies(likes):
     df=get_data()
     vector=movie_vector(df)
     matrix=get_similarity_matrix(vector)
-    recommender("Batman",matrix,df)
+    for x in likes:
+        recommender(x['title'],matrix,df)
+    return
+
+    
+#df=prepare_data()
+#similarity_matrix=get_similarity_matrix()
 
     
 

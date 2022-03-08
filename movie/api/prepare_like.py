@@ -69,6 +69,8 @@ def prepare_likes(dict):
     df['tags'] =df['tags'].lower()
     print("df['tags'] type: ",type(df['tags']))
 
+    df['tags']= stem(df['tags'])
+
     print("df type: ",type(df))
 
     return df 
@@ -109,6 +111,15 @@ def remove_space(string):
     for i in string:
         lst.append(i.replace(" ",""))
     return lst
+
+def stem(txt):
+    pos = PorterStemmer()
+    lst = []
+    for i in txt.split():
+        lst.append(pos.stem(i))
+    #conv lst to str
+    return " ".join(lst)
+
 
 def push_like_to_data(likes):
     #convert dict to pandas dataframe
