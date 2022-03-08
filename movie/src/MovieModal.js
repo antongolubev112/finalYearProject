@@ -113,7 +113,7 @@ export default function BasicModal({ children, id }) {
       },
       //convert email and password to a json string
       body: JSON.stringify({
-        id: movie.id,
+        movie_id: movie.id,
         title: movie.title,
         genres: movie.genres,
         overview: movie.overview,

@@ -6,7 +6,7 @@ from flask import json
 from nltk.stem.porter import PorterStemmer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from db import Data, app
+from db import Data, app,db ,engine
 
 
 path="./tmdb_5000_"
@@ -27,27 +27,33 @@ def prepare_data():
 
     #converts keywords object into a dictionary
     ast.literal_eval(movies['keywords'][0])
-
+    	
+    print("working....")
     #extract genres and keywords from python dictionary
     movies['genres'] = movies['genres'].apply(convert)
     movies['keywords'] = movies['keywords'].apply(convert)  
 
+    print("working 2....")
     #extract names of actors from cast column
     movies['cast'] = movies['cast'].apply(convert_cast)
 
+    print("working 3....")
     #extract names of director and sound designer fromn cast column
     movies['crew'] = movies['crew'].apply(convert_crew)
     
+    print("working 4....")
     #remove spaces between words from data
     movies['genres'] = movies['genres'].apply(remove_space)
     movies['keywords'] = movies['keywords'].apply(remove_space)
     movies['cast'] = movies['cast'].apply(remove_space)
     movies['crew'] = movies['crew'].apply(remove_space)
 
+    print("working 5....")
     #in order to append the overview column, which is a string, to the rest of the relevant columns which are lists, 
     #I have to change it into a list
     movies['overview'] = movies['overview'].apply(lambda x:x.split())
 
+    print("working 6....")
     #merge all columns into one for easier conversion 
     movies['tags'] = movies['overview'] + movies['genres'] + movies['keywords'] + movies['cast'] + movies['crew']
     df = movies[['movie_id','title','tags']]
@@ -57,6 +63,8 @@ def prepare_data():
     
     #set all values in the tags column to lowercase
     df['tags'] = df['tags'].apply(lambda x:x.lower())
+
+    df['tags']= df['tags'].apply(stem)
 
     return df
 
@@ -96,8 +104,23 @@ def remove_space(string):
         lst.append(i.replace(" ",""))
     return lst
 
+def stem(txt):
+    pos = PorterStemmer()
+    lst = []
+    for i in txt.split():
+        lst.append(pos.stem(i))
+    #conv lst to str
+    return " ".join(lst)
+
 def push_to_db():
     df=prepare_data()
+    
+    df.to_sql("data_for_model", con=engine, if_exists='append', index=False)
+
 
     return
+
+if __name__=='__main__':
+    push_to_db()
+    print("finished")
 

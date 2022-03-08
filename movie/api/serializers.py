@@ -23,7 +23,7 @@ def user_serializer(user,token):
 
 def recommender_serializer(like):
     return{
-        'id':like.movieId,
+        'movie_id':like.id,
         'title':like.title,
         'genres':like.genres,
         'overview':like.overview,

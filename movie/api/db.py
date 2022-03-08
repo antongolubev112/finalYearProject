@@ -103,7 +103,7 @@ class Likes(db.Model):
 
 class Data(db.Model):
     __tablename__="data_for_model"
-    movie_id=db.Column(db.Integer, primary_key=True)
+    movie_id=db.Column(db.String, primary_key=True)
     title=db.Column(db.String, primary_key=True)
     tags=db.Column(db.String, primary_key= True)
 

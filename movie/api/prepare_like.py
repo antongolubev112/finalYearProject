@@ -6,6 +6,7 @@ from flask import json
 from nltk.stem.porter import PorterStemmer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from db import engine
 
 def prepare_likes(dict):
     #turn likes into dict
@@ -55,7 +56,7 @@ def prepare_likes(dict):
     print(dict['overview'])
     
     dict['tags'] = dict['overview'] + dict['genres'] + dict['keywords'] + dict['cast'] + dict['crew']
-    keys=['id','title','tags']
+    keys=['movie_id','title','tags']
     #merge dictionaries into one dictionary
     df={x:dict[x] for x in keys}
     print(df)
@@ -67,6 +68,8 @@ def prepare_likes(dict):
      #set all values in the tags column to lowercase
     df['tags'] =df['tags'].lower()
     print("df['tags'] type: ",type(df['tags']))
+
+    print("df type: ",type(df))
 
     return df 
 
@@ -106,3 +109,11 @@ def remove_space(string):
     for i in string:
         lst.append(i.replace(" ",""))
     return lst
+
+def push_like_to_data(likes):
+    #convert dict to pandas dataframe
+    dict=prepare_likes(likes)
+    df=pd.DataFrame.from_records(dict,index=[0])
+    df.to_sql("data_for_model", con=engine, if_exists='append', index=False)
+
+    return

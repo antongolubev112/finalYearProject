@@ -8,9 +8,9 @@ from flask import jsonify,request,json
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import bcrypt
 import os
-from queries import check_user,get_user_details,get_password,checkLikes,get_all_likes,delete_like
+from queries import check_user,get_user_details,get_password,checkLikes,get_all_likes,delete_like,check_df
 from serializers import user_serializer, movie_serializer,like_serializer,recommender_serializer
-from prepare_like import prepare_likes
+from prepare_like import push_like_to_data
 
 #generate salt for bcrypt
 salt=bcrypt.gensalt()
@@ -127,7 +127,7 @@ def add_like():
     print(request.headers)
     print(request_data)
 
-    if request_data['id'] is None:
+    if request_data['movie_id'] is None:
         return jsonify({"msg": "INVALID MOVIE"}), 401
     
     #Gets email of user from the jwt token from the payload of the token.
@@ -140,8 +140,8 @@ def add_like():
     print("User id",user.user_Id)
 
     #if like already exists then unlike
-    if checkLikes(request_data['id'],user.user_Id) :
-        delete_like(request_data['id'],user.user_Id)
+    if checkLikes(request_data['movie_id'],user.user_Id) :
+        delete_like(request_data['movie_id'],user.user_Id)
         return jsonify({"msg": "Movie unliked"}), 200
 
     request_data['keywords']=json.dumps(request_data['keywords'])
@@ -149,7 +149,7 @@ def add_like():
     request_data['crew']=json.dumps(request_data['crew'])
     request_data['genres']=json.dumps(request_data['genres'])
 
-    like=Likes(movieId=request_data['id'],
+    like=Likes(movieId=request_data['movie_id'],
         title=request_data['title'],
         genres=request_data['genres'],
         overview=request_data['overview'],
@@ -159,11 +159,18 @@ def add_like():
         user_id=user.user_Id
     )
 
+    #add the users like to the dataframe on the database
+    add_to_df(request_data)
+
     db.session.add(like)
     db.session.commit()
     
     return{'201': 'added like successfully'}
 
+def add_to_df(like):
+    if not check_df(like['movie_id']):
+        push_like_to_data(like)
+    return
 
 @app.route('/movie/<int:id>')
 def show_movie(id):
@@ -182,6 +189,7 @@ def get_likes():
 
     for x in likes:
         likes_list.append(like_serializer(x))
+        
 
     print(likes_list)
     return jsonify(likes_list)
@@ -196,7 +204,7 @@ def recommend():
     likes_list=[]
 
     for x in likes:
-        prepare_likes(recommender_serializer(x))
+        push_like_to_data(recommender_serializer(x))
 
     return{'201': 'test'}
 

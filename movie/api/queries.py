@@ -1,5 +1,6 @@
-from db import Movie, app, User, db, Likes
+from db import Movie, app, User, db, Likes, Data,engine
 from sqlalchemy import and_
+import pandas as pd
 
 
 def check_user(email):
@@ -32,6 +33,14 @@ def checkLikes(movie_id, user_id):
     print("exists: ",exists)
     return exists
 
+def get_data():
+    return pd.read_sql("data_for_model", engine)
+
+def check_df(id):
+    exists = db.session.query(Data.movie_id).filter_by(
+        movie_id=id).first() is not None
+    print("Movie is in the dataframe: ",exists)
+    return exists
 
 def get_all_likes(user_id):
     return Likes.query.filter_by(user_id=user_id).all()
