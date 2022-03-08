@@ -9,8 +9,8 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 import bcrypt
 import os
 from queries import check_user,get_user_details,get_password,checkLikes,get_all_likes,delete_like
-from serializers import user_serializer, movie_serializer,like_serializer
-from recommender import prepare_likes
+from serializers import user_serializer, movie_serializer,like_serializer,recommender_serializer
+from prepare_like import prepare_likes
 
 #generate salt for bcrypt
 salt=bcrypt.gensalt()
@@ -139,7 +139,7 @@ def add_like():
     user=get_user_details(email)
     print("User id",user.user_Id)
 
-    #if like already exists then return an error
+    #if like already exists then unlike
     if checkLikes(request_data['id'],user.user_Id) :
         delete_like(request_data['id'],user.user_Id)
         return jsonify({"msg": "Movie unliked"}), 200
@@ -196,9 +196,7 @@ def recommend():
     likes_list=[]
 
     for x in likes:
-        likes_list.append(like_serializer(x))
-
-    print(prepare_likes(likes))
+        prepare_likes(recommender_serializer(x))
 
     return{'201': 'test'}
 

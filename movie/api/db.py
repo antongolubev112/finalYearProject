@@ -101,6 +101,17 @@ class Likes(db.Model):
         self.crew = crew
         self.user_id=user_id
 
+class Data(db.Model):
+    __tablename__="data_for_model"
+    movie_id=db.Column(db.Integer, primary_key=True)
+    title=db.Column(db.String, primary_key=True)
+    tags=db.Column(db.String, primary_key= True)
+
+    def __init__(self, movie_id, title, tags):
+        self.movie_id = movie_id
+        self.title = title
+        self.tags= tags
+
 if __name__=='__main__':
     app.run(debug=True)
     
