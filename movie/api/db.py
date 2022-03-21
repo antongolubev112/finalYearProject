@@ -116,7 +116,7 @@ class Data(db.Model):
 
 class Recommendations(db.Model):
     __tablename__="recommendations"
-    movie_id=db.Column(db.String,unique=True, primary_key=True)
+    movie_id=db.Column(db.Integer, unique=True, primary_key=True)
     title=db.Column(db.String, nullable=False)
     og_movie=db.Column(db.String, nullable=False)
 

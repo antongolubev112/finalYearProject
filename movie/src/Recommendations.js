@@ -30,6 +30,7 @@ export const Recommendations = () => {
     console.log(json);
     if (response.status === 200) {
       console.log(Object.values(json));
+      setRecommendations(json)
       return json;
     }
   };

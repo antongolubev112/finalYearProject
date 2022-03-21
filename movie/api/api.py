@@ -9,7 +9,7 @@ from flask import jsonify,request,json
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import bcrypt
 import os
-from queries import check_user,get_user_details,get_password,check_likes,get_all_likes,delete_like,check_df,get_rec_id,check_rec,get_all_recommendations
+from queries import check_user,get_user_details,get_password,check_likes,get_all_likes,delete_like,check_df,get_rec_id,check_rec,get_all_recommendations,delete_recommendations
 from serializers import user_serializer, movie_serializer,like_serializer,recommender_serializer,recommendation_serializer
 from prepare_like import push_like_to_data
 from recommender import recommend_movies
@@ -126,8 +126,8 @@ def add_like():
     print("In api.like()")
     #convert to python dictionary 
     request_data = json.loads(request.data)
-    print(request.headers)
-    print(request_data)
+    #print(request.headers)
+    #print(request_data)
 
     if request_data['movie_id'] is None:
         return jsonify({"msg": "INVALID MOVIE"}), 401
@@ -144,6 +144,7 @@ def add_like():
     #if like already exists then unlike
     if check_likes(request_data['movie_id'],user.user_Id) :
         delete_like(request_data['movie_id'],user.user_Id)
+        delete_recommendations(user.user_Id,request_data['title'])
         return jsonify({"msg": "Movie unliked"}), 200
 
     request_data['keywords']=json.dumps(request_data['keywords'])
@@ -219,6 +220,7 @@ def recommend():
         biggest_id=-1
 
     biggest_id=int(biggest_id)
+    print("biggest id:",biggest_id)
     
     #set the next id to be id+1
     id= biggest_id+1
@@ -239,7 +241,8 @@ def recommend():
                 db.session.commit()
 
 
-    return{'201': 'test'}
+
+    return show_recommendations()
 
 @app.route('/recommendations',methods=['POST'])
 @jwt_required()

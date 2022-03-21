@@ -1,3 +1,5 @@
+from multiprocessing import synchronize
+from re import L
 from db import Movie, app, User, db, Likes, Data,engine,Recommendations
 from sqlalchemy import and_,func
 import pandas as pd
@@ -35,12 +37,14 @@ def check_likes(movie_id, user_id):
     return exists
 
 def check_rec(title,user_id):
-    exists=db.session.query(Recommendations.title).filter(
+    exists=db.session.query(Recommendations.movie_id).filter(
         (and_(
-            title==title,
-            user_id==user_id
-        ))
+            title==Recommendations.title,
+            user_id==Recommendations.user_id
+        )
+        )
     ).first() is not None
+    print("recommendation ",title," exists: ",exists)
     return exists
 
 def get_data():
@@ -68,6 +72,24 @@ def delete_like(id, user_id):
     ).delete()
     db.session.commit()
     return 200
+
+def delete_recommendations(user_id,og_movie):
+    """
+    Recommendations.query.filter(Recommendations.user_id==user_id).delete(synchronize_session=False)
+    db.session.commit()
+    print("Unliked")
+    """
+    recs=db.session.query(Recommendations).filter(
+        (and_(
+            og_movie==Recommendations.og_movie,
+            user_id==Recommendations.user_id
+        )
+        )
+    ).delete()
+    print(recs)
+    db.session.commit()
+    print("deleted")
+    return
 
 def get_rec_id():
     biggest_id=db.session.query(func.max(Recommendations.movie_id)).scalar()
