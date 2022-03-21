@@ -1,15 +1,16 @@
 from re import U
+import re
 import jwt
 from sqlalchemy.sql.expression import false
 from sqlalchemy.sql.functions import user
-from db import Movie, app, User, db, Likes
+from db import Movie, app, User, db, Likes, Recommendations
 from sqlalchemy import func,delete
 from flask import jsonify,request,json
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import bcrypt
 import os
-from queries import check_user,get_user_details,get_password,checkLikes,get_all_likes,delete_like,check_df
-from serializers import user_serializer, movie_serializer,like_serializer,recommender_serializer
+from queries import check_user,get_user_details,get_password,check_likes,get_all_likes,delete_like,check_df,get_rec_id,check_rec,get_all_recommendations
+from serializers import user_serializer, movie_serializer,like_serializer,recommender_serializer,recommendation_serializer
 from prepare_like import push_like_to_data
 from recommender import recommend_movies
 
@@ -68,7 +69,7 @@ def create_auth_token():
 def register():
     print("In api.register()")
 
-    #convert to python dictionary 
+    #convert request data to python dictionary 
     request_data = json.loads(request.data)
     print("loaded json")
     
@@ -141,7 +142,7 @@ def add_like():
     print("User id",user.user_Id)
 
     #if like already exists then unlike
-    if checkLikes(request_data['movie_id'],user.user_Id) :
+    if check_likes(request_data['movie_id'],user.user_Id) :
         delete_like(request_data['movie_id'],user.user_Id)
         return jsonify({"msg": "Movie unliked"}), 200
 
@@ -207,11 +208,55 @@ def recommend():
     for x in likes:
         likes_list.append(recommender_serializer(x))
     
-    recommend_movies(likes_list)
+    recommendations=recommend_movies(likes_list)
+    print("recs:", recommendations)
+
+    #find the latest user's id
+    #cast to int
+    biggest_id=get_rec_id()
+
+    if biggest_id == None:
+        biggest_id=-1
+
+    biggest_id=int(biggest_id)
     
+    #set the next id to be id+1
+    id= biggest_id+1
+
+    #extract key and value from dictionary
+    for original,recommended in recommendations.items():
+        print("og: ",original)
+
+        #remove duplicates if there are any
+        #turns list into dictionary which cannot have duplicates, then turns it back into a list
+        recommended=list(dict.fromkeys(recommended))
+        #loop over recommendations list
+        for i in recommended:
+            if not check_rec(i,user.user_Id):
+                movie_rec=Recommendations(movie_id=id,title=i,og_movie=original,user_id=user.user_Id)
+                id+=1
+                db.session.add(movie_rec)
+                db.session.commit()
 
 
     return{'201': 'test'}
+
+@app.route('/recommendations',methods=['POST'])
+@jwt_required()
+def show_recommendations():
+    print("In /recommendations")
+    email=get_jwt_identity()
+    user=get_user_details(email)
+    recommendations=get_all_recommendations(user.user_Id)
+
+    recommendations_list=[]
+
+    for x in recommendations:
+        recommendations_list.append(recommendation_serializer(x))
+
+    print(recommendations_list)
+    return jsonify(recommendations_list)
+    
 
 if __name__=='__main__':
     app.run(debug=True)

@@ -96,7 +96,7 @@ def convert_like_cast(string):
     cast = []
     counter = 0
     for i in json.loads(string):
-        if counter < 5:
+        if counter < 2:
             cast.append(i['name'])
         counter+=1
     return cast 

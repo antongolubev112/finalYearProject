@@ -31,3 +31,9 @@ def like_serializer(like):
     return{
         'id':like.movieId,
     }
+
+def recommendation_serializer(recommendation):
+    return{
+        'recommendation':recommendation.title,
+        'og_movie':recommendation.og_movie
+    }

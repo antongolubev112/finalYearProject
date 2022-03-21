@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, Float, Date
 from flask_jwt_extended import JWTManager
 
+
 db_user=os.environ.get('DB_USER')
 db_password=os.environ.get('DB_PASS')
 app= Flask(__name__)
@@ -30,6 +31,7 @@ class User(db.Model):
     email= db.Column(db.String, unique=True, nullable=False)
     password= db.Column(db.LargeBinary, nullable=False)
     likes = db.relationship("Likes", backref=db.backref("users"))
+    recommendation = db.relationship("Recommendations", backref=db.backref("users"))
 
 class Movie(db.Model):
     __tablename__="movies"
@@ -105,12 +107,26 @@ class Data(db.Model):
     __tablename__="data_for_model"
     movie_id=db.Column(db.String, primary_key=True)
     title=db.Column(db.String, primary_key=True)
-    tags=db.Column(db.String, primary_key= True)
+    tags=db.Column(db.String, primary_key=True)
 
     def __init__(self, movie_id, title, tags):
         self.movie_id = movie_id
         self.title = title
         self.tags= tags
+
+class Recommendations(db.Model):
+    __tablename__="recommendations"
+    movie_id=db.Column(db.String,unique=True, primary_key=True)
+    title=db.Column(db.String, nullable=False)
+    og_movie=db.Column(db.String, nullable=False)
+
+    user_id=db.Column(db.Integer,ForeignKey('users.user_Id'))
+
+    def __init__(self, movie_id, title,og_movie,user_id):
+        self.movie_id = movie_id
+        self.title = title
+        self.og_movie=og_movie,
+        self.user_id=user_id
 
 if __name__=='__main__':
     app.run(debug=True)

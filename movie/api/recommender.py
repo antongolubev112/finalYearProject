@@ -19,19 +19,32 @@ def get_similarity_matrix(vector):
 def recommender(liked_movie,similarity_matrix,df):
     mov_indx = df[df['title']==liked_movie].index[0] #getting index of given movie
     dist = similarity_matrix[mov_indx] #passing movie index to similarity matrix
-    top_8_movies = sorted(list(enumerate(dist)),reverse=True,key=lambda x:x[1])[1:9]
+    similar_movies = sorted(list(enumerate(dist)),reverse=True,key=lambda x:x[1])[1:5]
+
+    #array to return
+    likes=[]
     
-    for i in top_8_movies:
+    #get top 8 most similar movies
+    for i in similar_movies:
+        likes.append(df.iloc[i[0]].title)
         print(df.iloc[i[0]].title) #out of tupple we want index i.e 0th index
-    return
+
+    return likes
 
 def recommend_movies(likes):
     df=get_data()
     vector=movie_vector(df)
+    #print(vector)
     matrix=get_similarity_matrix(vector)
+    print(matrix)
+
+    #make a dictionary
+    recs=dict()
     for x in likes:
-        recommender(x['title'],matrix,df)
-    return
+        #store the original movie as the key and the recommendations as the values
+        recs.setdefault(x['title'],(recommender(x['title'],matrix,df)))
+        
+    return recs
 
     
 #df=prepare_data()

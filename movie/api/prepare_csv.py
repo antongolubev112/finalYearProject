@@ -64,6 +64,7 @@ def prepare_data():
     #set all values in the tags column to lowercase
     df['tags'] = df['tags'].apply(lambda x:x.lower())
 
+    #normalise the words
     df['tags']= df['tags'].apply(stem)
 
     return df
@@ -81,7 +82,7 @@ def convert_cast(string):
     cast = []
     counter = 0
     for i in ast.literal_eval(string):
-        if counter < 5:
+        if counter < 2:
             cast.append(i['name'])
         counter+=1
     return cast 
@@ -116,8 +117,6 @@ def push_to_db():
     df=prepare_data()
     
     df.to_sql("data_for_model", con=engine, if_exists='append', index=False)
-
-
     return
 
 if __name__=='__main__':

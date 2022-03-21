@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "./state/userSlice";
 import { useEffect, useState } from "react";
 import "./movielist.css"
+import "./likedmovies.css"
 import { SingleMovie } from "./SingleMovie";
 import userLikesService from "./userLikesService";
 
@@ -13,29 +14,6 @@ export const LikedMovies = () => {
   const [likes, setLikes] = useState();
   const token = sessionStorage.getItem("token");
   const [movies,setMovies]= useState();
-
-  const fetchLikes = async () => {
-    console.log(user.email);
-    console.log("token ", token);
-    const options = {
-      method: "POST",
-      // tell backend that this data will be json because that's what its expecting
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      //convert email and password to a json string
-    };
-
-    const response = await fetch(`/getLikes`, options);
-    const json = await response.json();
-    console.log(json);
-    if (response.status === 200) {
-      console.log(Object.values(json));
-      setLikes(json);
-      return json;
-    }
-  };
 
   const fetchMovies = async () => {
     //iterate through likes object to make concurrent requests
@@ -54,7 +32,6 @@ export const LikedMovies = () => {
           setMovies(res);
         })
       );
-    //console.log("fetch movies called");
   };
 
   //if user is logged in then fetch the ids of the liked movies from postgres
@@ -65,7 +42,7 @@ export const LikedMovies = () => {
     //setToken(sessionStorage.getItem("token"));
   }, []);
 
-  //if likes isn't null then fetch movie details from TMDB.
+  //when likes change then fetch movie details from TMDB.
   useEffect(() => {
     if (likes != null) {
       fetchMovies();
