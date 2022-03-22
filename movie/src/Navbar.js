@@ -51,11 +51,19 @@ function Header() {
           </Link>
         )}
 
-        <Link to="/recommend" style={{ textDecoration: "none" }} color="white">
-          <div className="navbar__option">
-            <span className="navbar__optionLineTwo">Recommendations</span>
-          </div>
-        </Link>
+        {user ? (
+          <Link to="/recommend" style={{ textDecoration: "none" }} color="white">
+            <div className="navbar__option">
+              <span className="navbar__optionLineTwo">Recommendations</span>
+            </div>
+          </Link>
+        ) : (
+          <Link to="/login" style={{ textDecoration: "none" }} color="white">
+            <div className="navbar__option">
+              <span className="navbar__optionLineTwo">Recommendations</span>
+            </div>
+          </Link>
+        )}
       </div>
       <Link to="/search" style={{ textDecoration: "none" }} color="white">
         <div className="navbar__option">

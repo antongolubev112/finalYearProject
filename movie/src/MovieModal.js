@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { makeStyles } from "@material-ui/core/styles";
@@ -43,6 +42,7 @@ export default function BasicModal({ children, id }) {
   const [trailer, setTrailer] = useState();
   const [token, setToken] = useState();
   const [liked, setLiked] = useState(false);
+  const [originalMovie,setOriginalMovie]=useState();
   const user = useSelector(selectUser);
   const dispatch= useDispatch();
 

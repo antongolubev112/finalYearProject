@@ -24,6 +24,10 @@ export const userSlice = createSlice({
         //add like id onto like array
         like:(state,action)=>{
             state.user.likes.push(action.payload);
+        },
+
+        addRecommendations:(state,action)=>{
+            //state.recommendations=
         }
     },
 });

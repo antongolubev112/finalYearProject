@@ -5,14 +5,19 @@ import { useSelector } from "react-redux";
 import { selectUser } from "./state/userSlice";
 import Button from '@mui/material/Button';
 import { SingleMovie } from "./SingleMovie";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export const Recommendations = () => {
   const user = useSelector(selectUser);
   const token = sessionStorage.getItem("token");
   const [recommendations,setRecommendations]=useState();
   const [movies,setMovies]=useState();
+  const [recommendationId,setRecommendationId]=useState([]);
+  const [loaded,setLoaded]=useState(true);
 
   const refreshRecommendations= async () => {
+    setLoaded(false);
     console.log(user.email);
     console.log("token ", token);
     const options = {
@@ -31,6 +36,7 @@ export const Recommendations = () => {
     if (response.status === 200) {
       console.log(Object.values(json));
       setRecommendations(json)
+      setLoaded(true)
       return json;
     }
   };
@@ -86,14 +92,34 @@ export const Recommendations = () => {
       fetchMovies();
     }
   },[recommendations])
+
+  useEffect(()=>{
+    //extract recommendation ids
+    if(movies!=null){
+      var result= movies.map(a=>a.data.results[0].id)
+      console.log(result)
+      console.log(user )
+    }
+    
+  },[movies])
   return (
     <div>
       <span className="LikedMovies__Title"> Recommended Movies </span>
-      <div><Button variant="contained" size="small" onClick={refreshRecommendations}>Refresh</Button></div>
+      <div>
+        <Button variant="contained" size="small" onClick={refreshRecommendations}>Refresh</Button>
+        {loaded==false && loaded!=true &&
+          <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+        }
+      </div>
       <div className="MovieList">
         {/* if content is not empty and  */}
-        {movies &&
-          movies.map((c) => (
+        {movies && 
+          movies.map((c) => ( 
             <SingleMovie
               key={c.data.results[0].id}
               id={c.data.results[0].id}

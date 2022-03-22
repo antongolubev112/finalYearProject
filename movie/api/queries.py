@@ -94,4 +94,16 @@ def delete_recommendations(user_id,og_movie):
 def get_rec_id():
     biggest_id=db.session.query(func.max(Recommendations.movie_id)).scalar()
     return biggest_id
+
+def compare_likes_to_recs(like,user_id):
+    title=like.title
+    exists=db.session.query(Recommendations.movie_id).filter(
+        (and_(
+            title==Recommendations.og_movie,
+            user_id==Recommendations.user_id
+        )
+        )
+    ).first() is not None
+    print("recommendations for ",title," exist: ",exists)
+    return exists
 #def check_recommendation()

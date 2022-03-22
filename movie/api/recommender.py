@@ -36,7 +36,6 @@ def recommend_movies(likes):
     vector=movie_vector(df)
     #print(vector)
     matrix=get_similarity_matrix(vector)
-    print(matrix)
 
     #make a dictionary
     recs=dict()

@@ -9,7 +9,7 @@ from flask import jsonify,request,json
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import bcrypt
 import os
-from queries import check_user,get_user_details,get_password,check_likes,get_all_likes,delete_like,check_df,get_rec_id,check_rec,get_all_recommendations,delete_recommendations
+from queries import check_user,get_user_details,get_password,check_likes,get_all_likes,delete_like,check_df,get_rec_id,check_rec,get_all_recommendations,delete_recommendations,compare_likes_to_recs
 from serializers import user_serializer, movie_serializer,like_serializer,recommender_serializer,recommendation_serializer
 from prepare_like import push_like_to_data
 from recommender import recommend_movies
@@ -56,7 +56,7 @@ def create_auth_token():
     
 
     #create access token
-    access_token = create_access_token(identity=email)
+    access_token = create_access_token(identity=email,expires_delta=False)
     
     print("token: "+access_token)
 
@@ -193,7 +193,6 @@ def get_likes():
     for x in likes:
         likes_list.append(like_serializer(x))
         
-
     print(likes_list)
     return jsonify(likes_list)
 
@@ -207,9 +206,16 @@ def recommend():
     likes_list=[]
 
     for x in likes:
-        likes_list.append(recommender_serializer(x))
+        if not compare_likes_to_recs(x,user.user_Id):
+            likes_list.append(recommender_serializer(x))
+        else:
+            continue
     
-    recommendations=recommend_movies(likes_list)
+    print("list of likes to send to algorithm:",likes_list)
+    if len(likes_list)>0:
+        recommendations=recommend_movies(likes_list)
+    else:
+        return show_recommendations()
     print("recs:", recommendations)
 
     #find the latest user's id
@@ -239,8 +245,6 @@ def recommend():
                 id+=1
                 db.session.add(movie_rec)
                 db.session.commit()
-
-
 
     return show_recommendations()
 
