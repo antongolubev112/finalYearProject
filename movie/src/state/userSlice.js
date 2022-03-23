@@ -25,14 +25,19 @@ export const userSlice = createSlice({
         like:(state,action)=>{
             state.user.likes.push(action.payload);
         },
+        
+        addDislike:(state,action)=>{
+            state.user.dislikes=Object.values(state.user.dislikes).push(action.payload);
+        },
 
-        addRecommendations:(state,action)=>{
-            //state.recommendations=
-        }
+        removeDislike:(state,action)=>{
+            state.user.dislikes=Object.values(state.user.dislikes).filter(dislike => dislike.id !== action.payload);
+        },
+
     },
 });
 
-export const{login,logout,unlike,like}= userSlice.actions;
+export const{login,logout,unlike,like,addDislike,removeDislike}= userSlice.actions;
 
 export const selectUser= (state)=> state.user.user;
 

@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import {login} from "./state/userSlice";
 import "./login.css";
 import userLikesService from "./userLikesService";
+import userDislikesService from "./userDislikesService";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -48,7 +49,9 @@ export const Login = () => {
 
           //fetch the logged in user's likes
           const likes= await userLikesService(json.token);
+          const dislikes= await userDislikesService(json.token);
           console.log("likes: ",likes)
+          console.log("dislikes: ",dislikes)
           setEmail("");
           setPassword("");
 
@@ -63,7 +66,8 @@ export const Login = () => {
               email:json.email,
               token:json.token,
               likes:likes,
-              loggedIn: true,
+              dislikes: dislikes,
+              loggedIn: true
           }));
 
           return json;

@@ -9,13 +9,15 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import YouTubeIcon from "@material-ui/icons/YouTube";
 import "./movieModal.css";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import { IconButton } from "@mui/material";
 import { useSelector } from "react-redux";
 import { selectUser } from "./state/userSlice";
-import { useDispatch } from 'react-redux';
-import {like,unlike} from './state/userSlice';
+import { useDispatch } from "react-redux";
+import { like, unlike, addDislike, removeDislike } from "./state/userSlice";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import ThumbUpAltRoundedIcon from "@mui/icons-material/ThumbUpAltRounded";
+import ThumbDownRoundedIcon from "@mui/icons-material/ThumbDownRounded";
+import ThumbDownOffAltRoundedIcon from "@mui/icons-material/ThumbDownOffAltRounded";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -42,10 +44,10 @@ export default function BasicModal({ children, id }) {
   const [trailer, setTrailer] = useState();
   const [token, setToken] = useState();
   const [liked, setLiked] = useState(false);
-  const [originalMovie,setOriginalMovie]=useState();
+  const [disliked, setDisliked] = useState(false);
+  const [originalMovie, setOriginalMovie] = useState();
   const user = useSelector(selectUser);
-  const dispatch= useDispatch();
-
+  const dispatch = useDispatch();
 
   const handleOpen = () => {
     setOpen(true);
@@ -78,20 +80,15 @@ export default function BasicModal({ children, id }) {
       //update the likes state object in redux
       dispatch(
         like({
-          id:id
-        }
-        )
-      )
-    }
-    else{
+          id: id,
+        })
+      );
+    } else {
       setLiked(false);
       //update the likes state object in redux
-      dispatch(
-        unlike(
-          id
-        )
-      )
+      dispatch(unlike(id));
     }
+    //get details about the liked movie from TMDB api
     const [cast, keywords] = await Promise.all([
       axios.get(
         `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_API}`
@@ -100,18 +97,19 @@ export default function BasicModal({ children, id }) {
         `https://api.themoviedb.org/3/movie/${id}/keywords?api_key=${process.env.REACT_APP_API}`
       ),
     ]);
-    console.log(cast);
-    console.log(keywords);
+    //console.log(cast);
+    //console.log(keywords);
 
-    console.log("token ", token);
+    //console.log("token ", token);
     const options = {
       method: "POST",
       // tell backend that this data will be json because that's what its expecting
+      // add token to http header
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
       },
-      //convert email and password to a json string
+      //put movie details into json format
       body: JSON.stringify({
         movie_id: movie.id,
         title: movie.title,
@@ -123,6 +121,7 @@ export default function BasicModal({ children, id }) {
       }),
     };
     try {
+      //send request to backend
       const response = await fetch("/like", options);
       const json = await response.json();
       if (response.status === 200) {
@@ -135,10 +134,64 @@ export default function BasicModal({ children, id }) {
     }
   };
 
+  const dislikeMovie = async (e) => {
+    if (disliked == false) {
+      if ((liked == true)) {
+        setLiked(false);
+        //update the likes state object in redux
+        dispatch(unlike(id));
+      }
+      setDisliked(true);
+      //update the likes state object in redux
+      dispatch(
+        addDislike({
+          id: id,
+        })
+      );
+    } else {
+      setDisliked(false);
+      //update the dislikes state object in redux
+      dispatch(removeDislike(id));
+    }
+
+    const options = {
+      method: "POST",
+      // tell backend that this data will be json because that's what its expecting
+      // add token to http header
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      //put movie details into json format
+      body: JSON.stringify({
+        movie_id: movie.id,
+        title: movie.title,
+      }),
+    };
+    try {
+      //send request to backend
+      const response = await fetch("/dislike", options);
+      const json = await response.json();
+      if (response.status === 200) {
+        return json;
+      }
+      console.log(json);
+    } catch (error) {
+      //log error
+      console.error("There was an error: ", error);
+    }
+  };
+
   //check if the movie is in the liked movies state
-  const checkLikes=()=>{
-    if(user.likes.find(x => x.id == id)){
+  const checkLikes = () => {
+    if (user.likes.find((x) => x.id == id)) {
       setLiked(true);
+    }
+  };
+
+  const checkDislikes = () => {
+    if (Object.values(user.dislikes).find((x) => x.id == id)) {
+      setDisliked(true);
     }
   };
 
@@ -152,13 +205,12 @@ export default function BasicModal({ children, id }) {
     };
   }, []);
 
-  useEffect(()=>{
-    if(user!=null){
+  useEffect(() => {
+    if (user != null) {
       checkLikes();
+      checkDislikes();
     }
-  },[user])
-
-
+  }, [user]);
 
   return (
     <div>
@@ -206,10 +258,26 @@ export default function BasicModal({ children, id }) {
                       }}
                       color="secondary"
                       aria-label="add an alarm"
-                    >{liked? <FavoriteRoundedIcon/> :
-                      <FavoriteBorderIcon />}
+                    >
+                      {liked ? (
+                        <ThumbUpAltRoundedIcon />
+                      ) : (
+                        <ThumbUpAltOutlinedIcon />
+                      )}
+                    </IconButton>
+                    <IconButton
+                      onClick={(e) => {dislikeMovie(e)}}
+                      color="secondary"
+                      aria-label="add an alarm"
+                    >
+                      {disliked ? (
+                        <ThumbDownRoundedIcon />
+                      ) : (
+                        <ThumbDownOffAltRoundedIcon />
+                      )}
                     </IconButton>
                   </span>
+
                   {movie.tagline && <i className="tagline">{movie.tagline}</i>}
 
                   <span className="MovieModal__description">

@@ -1,20 +1,20 @@
 from multiprocessing import synchronize
 from re import L
-from db import Movie, app, User, db, Likes, Data,engine,Recommendations
+from db import app, User, db, Likes, Data,engine,Recommendations, Dislikes
 from sqlalchemy import and_,func
 import pandas as pd
 
 
 
 def check_user(email):
-    exists = db.session.query(User.user_Id).filter_by(
+    exists = db.session.query(User.user_id).filter_by(
         email=email).first() is not None
     print(exists)
     return exists
 
 
 def get_user_details(email):
-    id = db.session.query(User.user_Id).filter_by(email=email).first()
+    id = db.session.query(User.user_id).filter_by(email=email).first()
     user = db.session.query(User).get(id)
     print(user)
     return user
@@ -25,10 +25,10 @@ def get_password(email):
 
 
 def check_likes(movie_id, user_id):
-    exists = db.session.query(Likes.movieId).filter(
+    exists = db.session.query(Likes.movie_id).filter(
         (and_(
             user_id==user_id,
-            movie_id==Likes.movieId
+            movie_id==Likes.movie_id
         )
         )
     ).first() is not None
@@ -47,6 +47,17 @@ def check_rec(title,user_id):
     print("recommendation ",title," exists: ",exists)
     return exists
 
+def check_dislikes(title,user_id):
+    exists=db.session.query(Dislikes.movie_id).filter(
+        (and_(
+            title==Dislikes.title,
+            user_id==Dislikes.user_id
+        )
+        )
+    ).first() is not None
+    print("dislike ",title," exists: ",exists)
+    return exists
+    
 def get_data():
     return pd.read_sql("data_for_model", engine)
 
@@ -60,25 +71,35 @@ def check_df(id):
 def get_all_likes(user_id):
     return Likes.query.filter_by(user_id=user_id).all()
 
+def get_all_dislikes(user_id):
+    return Dislikes.query.filter_by(user_id=user_id).all()
+
 def get_all_recommendations(user_id):
     return Recommendations.query.filter_by(user_id=user_id).all()
 
 def delete_like(id, user_id):
-    Likes.query.filter(
+    like=Likes.query.filter(
         (and_(
-            id==Likes.movieId,
+            id==Likes.movie_id,
+            user_id==user_id)
+        )
+    )
+    like.delete()
+    db.session.commit()
+    print("like deleted")
+    return 200
+
+def delete_dislike(id, user_id):
+    Dislikes.query.filter(
+        (and_(
+            id==Dislikes.movie_id,
             user_id==user_id)
         )
     ).delete()
     db.session.commit()
     return 200
 
-def delete_recommendations(user_id,og_movie):
-    """
-    Recommendations.query.filter(Recommendations.user_id==user_id).delete(synchronize_session=False)
-    db.session.commit()
-    print("Unliked")
-    """
+def delete_recommendations_by_og_movie(user_id,og_movie):
     recs=db.session.query(Recommendations).filter(
         (and_(
             og_movie==Recommendations.og_movie,
@@ -87,6 +108,19 @@ def delete_recommendations(user_id,og_movie):
         )
     ).delete()
     print(recs)
+    db.session.commit()
+    print("deleted")
+    return
+
+def delete_recommendations(user_id,title):
+    recs=db.session.query(Recommendations).filter(
+        (and_(
+            title==Recommendations.title,
+            user_id==Recommendations.user_id
+        )
+        )
+    ).delete()
+    print("in delete recs, recs are:",recs)
     db.session.commit()
     print("deleted")
     return

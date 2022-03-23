@@ -1,6 +1,6 @@
 def movie_serializer(movie):
         return{
-            'id':movie.movieId,
+            'id':movie.movie_id,
             'title':movie.title,
             'posterUrl':movie.posterUrl,
             'rtScore':movie.rtScore,
@@ -23,13 +23,13 @@ def user_serializer(user,token):
 
 def recommender_serializer(like):
     return{
-        'movie_id':like.movieId,
+        'movie_id':like.movie_id,
         'title':like.title,
     }
 
 def like_serializer(like):
     return{
-        'id':like.movieId,
+        'id':like.movie_id,
     }
 
 def recommendation_serializer(recommendation):

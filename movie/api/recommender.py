@@ -32,6 +32,8 @@ def recommender(liked_movie,similarity_matrix,df):
     return likes
 
 def recommend_movies(likes):
+    print("in recommender")
+    print('likes', likes)
     df=get_data()
     vector=movie_vector(df)
     #print(vector)
@@ -42,7 +44,8 @@ def recommend_movies(likes):
     for x in likes:
         #store the original movie as the key and the recommendations as the values
         recs.setdefault(x['title'],(recommender(x['title'],matrix,df)))
-        
+    
+    print('similar movies: ',recs)
     return recs
 
     

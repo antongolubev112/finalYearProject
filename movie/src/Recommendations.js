@@ -41,6 +41,7 @@ export const Recommendations = () => {
     }
   };
  
+  //get list of recommendations from backend
   const fetchRecs= async()=>{
     const options = {
       method: "POST",
@@ -61,6 +62,7 @@ export const Recommendations = () => {
     }
   };
 
+  //get movie details from TMDB 
   const fetchMovies = async () => {
     //iterate through likes object to make concurrent requests
     const { data } = axios
@@ -98,10 +100,10 @@ export const Recommendations = () => {
     if(movies!=null){
       var result= movies.map(a=>a.data.results[0].id)
       console.log(result)
-      console.log(user )
+      console.log(user)
     }
-    
   },[movies])
+
   return (
     <div>
       <span className="LikedMovies__Title"> Recommended Movies </span>

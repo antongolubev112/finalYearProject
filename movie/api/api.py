@@ -3,24 +3,19 @@ import re
 import jwt
 from sqlalchemy.sql.expression import false
 from sqlalchemy.sql.functions import user
-from db import Movie, app, User, db, Likes, Recommendations
+from db import app, User, db, Likes, Recommendations,Dislikes
 from sqlalchemy import func,delete
 from flask import jsonify,request,json
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import bcrypt
 import os
-from queries import check_user,get_user_details,get_password,check_likes,get_all_likes,delete_like,check_df,get_rec_id,check_rec,get_all_recommendations,delete_recommendations,compare_likes_to_recs
+from queries import check_user,get_user_details,get_password,check_likes,get_all_likes,delete_like,check_df,get_rec_id,check_rec,get_all_recommendations,delete_recommendations_by_og_movie,compare_likes_to_recs,check_dislikes,get_all_dislikes,delete_recommendations,delete_dislike
 from serializers import user_serializer, movie_serializer,like_serializer,recommender_serializer,recommendation_serializer
 from prepare_like import push_like_to_data
 from recommender import recommend_movies
 
 #generate salt for bcrypt
 salt=bcrypt.gensalt()
-
-@app.route('/movies',methods=['GET'])
-def index():
-    #unpack
-    return jsonify([*map(movie_serializer,Movie.query.all())])
 
 # Create a route to authenticate your users and return JWTs. The
 # create_access_token() function is used to actually generate the JWT.
@@ -93,7 +88,7 @@ def register():
         return jsonify({"msg": "Password is not valid!"}), 401
 
     #find the latest user's id
-    biggest_id=db.session.query(func.max(User.user_Id)).scalar()
+    biggest_id=db.session.query(func.max(User.user_id)).scalar()
     if biggest_id == None:
         biggest_id=-1
 
@@ -107,7 +102,7 @@ def register():
     print(request_data)
     
     #map the response from front end to user model
-    user= User(user_Id=id,
+    user= User(user_id=id,
     fname=request_data['fname'],
     lname=request_data['lname'],
     email=request_data['email'],
@@ -139,12 +134,12 @@ def add_like():
 
     #fetch user details using the email
     user=get_user_details(email)
-    print("User id",user.user_Id)
+    print("User id",user.user_id)
 
     #if like already exists then unlike
-    if check_likes(request_data['movie_id'],user.user_Id) :
-        delete_like(request_data['movie_id'],user.user_Id)
-        delete_recommendations(user.user_Id,request_data['title'])
+    if check_likes(request_data['movie_id'],user.user_id) :
+        delete_like(request_data['movie_id'],user.user_id)
+        delete_recommendations_by_og_movie(user.user_id,request_data['title'])
         return jsonify({"msg": "Movie unliked"}), 200
 
     request_data['keywords']=json.dumps(request_data['keywords'])
@@ -152,14 +147,14 @@ def add_like():
     request_data['crew']=json.dumps(request_data['crew'])
     request_data['genres']=json.dumps(request_data['genres'])
 
-    like=Likes(movieId=request_data['movie_id'],
+    like=Likes(movie_id=request_data['movie_id'],
         title=request_data['title'],
         genres=request_data['genres'],
         overview=request_data['overview'],
         keywords=request_data['keywords'],
         cast=request_data['cast'],
         crew=request_data['crew'],
-        user_id=user.user_Id
+        user_id=user.user_id
     )
 
     #add the users like to the dataframe on the database
@@ -170,23 +165,61 @@ def add_like():
     
     return{'201': 'added like successfully'}
 
+@app.route('/dislike',methods=['POST'])
+#decorator states that you need a jwt token to access this api endpoint
+@jwt_required()
+def dislike():
+    print("In api.dislike()")
+
+    #convert to python dictionary 
+    request_data = json.loads(request.data)
+
+    if request_data['movie_id'] is None:
+        return jsonify({"msg": "INVALID MOVIE"}), 401
+    
+    #Gets email of user from the jwt token from the payload of the token.
+    #The email was specified as the identity when it was created
+    email=get_jwt_identity()
+
+    #fetch user details using the email
+    user=get_user_details(email)
+
+    #if like already exists then unlike
+    if check_likes(request_data['movie_id'],user.user_id) :
+        delete_like(request_data['movie_id'],user.user_id)
+
+    if check_dislikes(request_data['title'],user.user_id):
+        delete_dislike(request_data['movie_id'],user.user_id)
+        print("removed disliked")
+        return {'201': 'removed dislike successfully'}
+
+    if check_rec(request_data['title'],user.user_id):
+        delete_recommendations(user.user_id,request_data['title'])
+        
+    dislike=Dislikes(movie_id=request_data['movie_id'],
+        title=request_data['title'],
+        user_id=user.user_id
+    )
+
+    db.session.add(dislike)
+    db.session.commit()
+
+    print("added dislike")
+    
+    return{'201': 'added dislike successfully'}
+
+
 def add_to_df(like):
     if not check_df(like['movie_id']):
         push_like_to_data(like)
     return
-
-@app.route('/movie/<int:id>')
-def show_movie(id):
-    #get movie from database based on id number
-    print(id)
-    return jsonify([*map(movie_serializer,Movie.query.filter_by(movieId=id))])
 
 @app.route('/getLikes',methods=['POST'])
 @jwt_required()
 def get_likes():
     email=get_jwt_identity()
     user=get_user_details(email)
-    likes=get_all_likes(user.user_Id)
+    likes=get_all_likes(user.user_id)
     
     likes_list=[]
 
@@ -196,17 +229,32 @@ def get_likes():
     print(likes_list)
     return jsonify(likes_list)
 
+@app.route('/getDislikes',methods=['POST'])
+@jwt_required()
+def get_dislikes():
+    email=get_jwt_identity()
+    user=get_user_details(email)
+    likes=get_all_dislikes(user.user_id)
+    
+    dislikes_list=[]
+
+    for x in likes:
+        dislikes_list.append(like_serializer(x))
+        
+    print(dislikes_list)
+    return jsonify(dislikes_list)
+
 @app.route('/recommend',methods=['POST'])
 @jwt_required()
 def recommend():
     email=get_jwt_identity()
     user=get_user_details(email)
-    likes=get_all_likes(user.user_Id)
+    likes=get_all_likes(user.user_id)
 
     likes_list=[]
 
     for x in likes:
-        if not compare_likes_to_recs(x,user.user_Id):
+        if not compare_likes_to_recs(x,user.user_id):
             likes_list.append(recommender_serializer(x))
         else:
             continue
@@ -234,17 +282,22 @@ def recommend():
     #extract key and value from dictionary
     for original,recommended in recommendations.items():
         print("og: ",original)
+        print("recommendation: ", recommended)
 
         #remove duplicates if there are any
         #turns list into dictionary which cannot have duplicates, then turns it back into a list
         recommended=list(dict.fromkeys(recommended))
         #loop over recommendations list
         for i in recommended:
-            if not check_rec(i,user.user_Id):
-                movie_rec=Recommendations(movie_id=id,title=i,og_movie=original,user_id=user.user_Id)
-                id+=1
-                db.session.add(movie_rec)
-                db.session.commit()
+            #if i isn't already in the recommendation table
+            if not check_rec(i,user.user_id):
+                #if i isn't a disliked movie
+                if not check_dislikes(i,user.user_id):
+                    movie_rec=Recommendations(movie_id=id,title=i,og_movie=original,user_id=user.user_id)
+                    id+=1
+                    db.session.add(movie_rec)
+                    db.session.commit()
+                    print("pushed recommendation to db")
 
     return show_recommendations()
 
@@ -254,7 +307,7 @@ def show_recommendations():
     print("In /recommendations")
     email=get_jwt_identity()
     user=get_user_details(email)
-    recommendations=get_all_recommendations(user.user_Id)
+    recommendations=get_all_recommendations(user.user_id)
 
     recommendations_list=[]
 
