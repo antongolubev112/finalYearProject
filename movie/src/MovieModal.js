@@ -206,11 +206,12 @@ export default function BasicModal({ children, id }) {
   }, []);
 
   useEffect(() => {
+    console.log('user state changed!')
     if (user != null) {
       checkLikes();
       checkDislikes();
     }
-  }, [user]);
+  }, [liked,disliked]);
 
   return (
     <div>
