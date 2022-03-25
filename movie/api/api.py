@@ -8,9 +8,8 @@ from sqlalchemy import func,delete
 from flask import jsonify,request,json
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import bcrypt
-import os
 from queries import check_user,get_user_details,get_password,check_likes,get_all_likes,delete_like,check_df,get_rec_id,check_rec,get_all_recommendations,delete_recommendations_by_og_movie,compare_likes_to_recs,check_dislikes,get_all_dislikes,delete_recommendations,delete_dislike
-from serializers import user_serializer, movie_serializer,like_serializer,recommender_serializer,recommendation_serializer
+from serializers import user_serializer,like_serializer,recommender_serializer,recommendation_serializer
 from prepare_like import push_like_to_data
 from recommender import recommend_movies
 

@@ -1,16 +1,3 @@
-def movie_serializer(movie):
-        return{
-            'id':movie.movie_id,
-            'title':movie.title,
-            'posterUrl':movie.posterUrl,
-            'rtScore':movie.rtScore,
-            'imdbScore':movie.imdbScore,
-            'rating':movie.rating,
-            'runtime':movie.runtime,
-            'studio':movie.studio,
-            'boxOffice':movie.boxOffice,
-            'releaseDate':movie.releaseDate
-        }
 
 #serialize user into json format and append a the token
 def user_serializer(user,token):

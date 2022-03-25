@@ -13,28 +13,16 @@ def prepare_likes(dict):
     if "genres" in dict:
       print("this will execute")
 
-    print("type of dict is: ",type(dict))
-    print("type of dict['genres'] is: ",type(dict['genres']))
-    print("type of dict['cast'] is: ",type(dict['cast']))
-    #print("dict[genres] : ",dict['genres'])
-    #print("dict[cast] : ",dict['cast'])
-    
-    #dict['genres']=json.dumps(dict['genres'])
-    #dict['genres']=ast.literal_eval(dict['genres'])
-
     #extract genres and keywords from python dictionary
     dict['genres'] = convert(dict['genres'])
-    print("converted dict[genres] : ",dict['genres'])
+
     dict['keywords'] = convert(dict['keywords'])
-    print("converted dict['keywords'] : ",dict['keywords'])
 
     #extract names of actors from cast 
     dict['cast'] = convert_like_cast(dict['cast'])
-    print("converted dict['cast'] : ",dict['cast'])
 
     #extract names of director and sound designer fromn cast column
     dict['crew'] = convert_like_crew(dict['crew'])
-    print("converted dict['crew'] : ",dict['crew'])
     
     #remove spaces between words from data
     dict['genres'] = remove_space(dict['genres'])
@@ -45,27 +33,17 @@ def prepare_likes(dict):
     print(dict['overview'])
     #turn str into dict
     dict['overview'] = dict['overview'].split()
-    print(dict['overview'])
-    
-    print("type of dict is: ",type(dict))
-    print("type of dict['genres'] is: ",type(dict['genres']))
-    print("type of dict['cast'] is: ",type(dict['cast']))
-    print("type of dict['keywords'] is: ",type(dict['keywords']))
-    print("type of dict['crew'] is: ",type(dict['crew']))
-    print("type of dict['overview'] is: ",type(dict['overview']))
-    print(dict['overview'])
-    
+
     dict['tags'] = dict['overview'] + dict['genres'] + dict['keywords'] + dict['cast'] + dict['crew']
     keys=['movie_id','title','tags']
     #merge dictionaries into one dictionary
     df={x:dict[x] for x in keys}
+
     print(df)
-    print("df['tags'] type: ",type(df['tags']))
 
     df['tags'] = " ".join(str(e) for e in df['tags'])
-    print("df['tags'] type: ",type(df['tags']))
 
-     #set all values in the tags column to lowercase
+    #set all values in the tags column to lowercase
     df['tags'] =df['tags'].lower()
     print("df['tags'] type: ",type(df['tags']))
 

@@ -10,7 +10,7 @@ const userDislikesService = async (token) => {
     //convert email and password to a json string
   };
 
-  const response = await fetch(`/getDislikes`, options);
+  const response = await fetch(`/allDislikes`, options);
   const json = await response.json();
   console.log(json);
   if (response.status === 200) {

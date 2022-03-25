@@ -1,5 +1,3 @@
-from multiprocessing import synchronize
-from re import L
 from db import app, User, db, Likes, Data,engine,Recommendations, Dislikes
 from sqlalchemy import and_,func
 import pandas as pd
