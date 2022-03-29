@@ -1,8 +1,4 @@
-import os
 from db import app
-from flask import Flask, json, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager
 
 
 def create_app():  

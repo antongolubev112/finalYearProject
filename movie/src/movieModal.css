@@ -38,6 +38,12 @@
     justify-content: space-evenly;
     font-weight: 300;
   }
+
+  .MovieModal__error{
+    color: red;
+    font-size: 12;
+    text-align: center
+  }
   
   .MovieModal__title {
     height: 12%;

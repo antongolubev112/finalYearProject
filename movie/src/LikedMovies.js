@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import "./movielist.css"
 import "./likedmovies.css"
 import { SingleMovie } from "./SingleMovie";
-import userLikesService from "./userLikesService";
+import userLikesService from "./services/userLikesService";
 
 export const LikedMovies = () => {
   const user = useSelector(selectUser);

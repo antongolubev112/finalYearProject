@@ -5,7 +5,7 @@ import MovieModal from "./MovieModal";
 //destructure and recieve props
 export const SingleMovie = ({ id, poster, title, date, vote_average }) => {
   return (
-    //passing single movie because they are children of the movieModal component tag
+    //passing single movie into movieModal as children
     <MovieModal id={id}>
       {/* fetch movie poster using api img size and the poster url */}
       <img className="SingleMovie__poster" src={`${img_300}/${poster}`} />

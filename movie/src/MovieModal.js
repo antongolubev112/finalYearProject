@@ -45,15 +45,18 @@ export default function BasicModal({ children, id }) {
   const [token, setToken] = useState();
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
-  const [originalMovie, setOriginalMovie] = useState();
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
+  const [userError, setUserError] = useState("");
+  const [movieCast,setMovieCast]= useState();
+
 
   const handleOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
+    setUserError("");
     setOpen(false);
   };
 
@@ -75,113 +78,123 @@ export default function BasicModal({ children, id }) {
   };
 
   const likeMovie = async (e) => {
-    if (liked == false) {
-      setLiked(true);
-      //update the likes state object in redux
-      dispatch(
-        like({
-          id: id,
-        })
-      );
-    } else {
-      setLiked(false);
-      //update the likes state object in redux
-      dispatch(unlike(id));
-    }
-    //get details about the liked movie from TMDB api
-    const [cast, keywords] = await Promise.all([
-      axios.get(
-        `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_API}`
-      ),
-      axios.get(
-        `https://api.themoviedb.org/3/movie/${id}/keywords?api_key=${process.env.REACT_APP_API}`
-      ),
-    ]);
-    //console.log(cast);
-    //console.log(keywords);
-
-    //console.log("token ", token);
-    const options = {
-      method: "POST",
-      // tell backend that this data will be json because that's what its expecting
-      // add token to http header
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      //put movie details into json format
-      body: JSON.stringify({
-        movie_id: movie.id,
-        title: movie.title,
-        genres: movie.genres,
-        overview: movie.overview,
-        keywords: keywords.data.keywords,
-        cast: cast.data.cast,
-        crew: cast.data.crew,
-      }),
-    };
-    try {
-      //send request to backend
-      const response = await fetch("/like", options);
-      const json = await response.json();
-      if (response.status === 200) {
-        return json;
-      }
-      console.log(json);
-    } catch (error) {
-      //log error
-      console.error("There was an error: ", error);
-    }
-  };
-
-  const dislikeMovie = async (e) => {
-    if (disliked == false) {
-      if ((liked == true)) {
+    if (user != null) {
+      if (liked == false) {
+        setLiked(true);
+        //update the likes state object in redux
+        dispatch(
+          like({
+            id: id,
+          })
+        );
+      } else {
         setLiked(false);
         //update the likes state object in redux
         dispatch(unlike(id));
       }
-      setDisliked(true);
-      //update the likes state object in redux
-      dispatch(
-        addDislike({
-          id: id,
-        })
-      );
-    } else {
-      setDisliked(false);
-      //update the dislikes state object in redux
-      dispatch(removeDislike(id));
-    }
-
-    const options = {
-      method: "POST",
-      // tell backend that this data will be json because that's what its expecting
-      // add token to http header
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      //put movie details into json format
-      body: JSON.stringify({
-        movie_id: movie.id,
-        title: movie.title,
-      }),
-    };
-    try {
-      //send request to backend
-      const response = await fetch("/dislike", options);
-      const json = await response.json();
-      if (response.status === 200) {
-        return json;
+      //get details about the liked movie from TMDB api
+      const [cast, keywords] = await Promise.all([
+        axios.get(
+          `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_API}`
+        ),
+        axios.get(
+          `https://api.themoviedb.org/3/movie/${id}/keywords?api_key=${process.env.REACT_APP_API}`
+        ),
+      ]);
+      //console.log(cast);
+      //console.log(keywords);
+      setMovieCast(cast);
+      //console.log("token ", token);
+      const options = {
+        method: "POST",
+        // tell backend that this data will be json because that's what its expecting
+        // add token to http header
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        //put movie details into json format
+        body: JSON.stringify({
+          movie_id: movie.id,
+          title: movie.title,
+          genres: movie.genres,
+          overview: movie.overview,
+          keywords: keywords.data.keywords,
+          cast: cast.data.cast,
+          crew: cast.data.crew,
+        }),
+      };
+      try {
+        //send request to backend
+        const response = await fetch("/like", options);
+        const json = await response.json();
+        if (response.status === 200) {
+          return json;
+        }
+        console.log(json);
+      } catch (error) {
+        //log error
+        console.error("There was an error: ", error);
       }
-      console.log(json);
-    } catch (error) {
-      //log error
-      console.error("There was an error: ", error);
+    }
+    else{
+      setUserError("Please log in to like a movie!")
     }
   };
 
+  const dislikeMovie = async (e) => {
+    if (user != null) {
+      if (disliked == false) {
+        if (liked == true) {
+          setLiked(false);
+          //update the likes state object in redux
+          dispatch(unlike(id));
+        }
+        setDisliked(true);
+        //update the likes state object in redux
+        dispatch(
+          addDislike({
+            id: id,
+          })
+        );
+      } else {
+        setDisliked(false);
+        //update the dislikes state object in redux
+        dispatch(removeDislike(id));
+      }
+
+      const options = {
+        method: "POST",
+        // tell backend that this data will be json because that's what its expecting
+        // add token to http header
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        //put movie details into json format
+        body: JSON.stringify({
+          movie_id: movie.id,
+          title: movie.title,
+        }),
+      };
+      try {
+        //send request to backend
+        const response = await fetch("/dislike", options);
+        const json = await response.json();
+        if (response.status === 200) {
+          return json;
+        }
+        console.log(json);
+      } catch (error) {
+        //log error
+        console.error("There was an error: ", error);
+      }
+    }
+    else{
+      setUserError("Please log in to dislike a movie!")
+    }
+  };
+  console.log(movie)
   //check if the movie is in the liked movies state
   const checkLikes = () => {
     if (user.likes.find((x) => x.id == id)) {
@@ -206,12 +219,17 @@ export default function BasicModal({ children, id }) {
   }, []);
 
   useEffect(() => {
-    console.log('user state changed!')
+    console.log("user state changed!");
     if (user != null) {
       checkLikes();
       checkDislikes();
     }
-  }, [liked,disliked]);
+  }, [liked, disliked]);
+
+  useEffect(() => {
+    console.log(movieCast);
+
+  }, [movieCast]);
 
   return (
     <div>
@@ -267,7 +285,9 @@ export default function BasicModal({ children, id }) {
                       )}
                     </IconButton>
                     <IconButton
-                      onClick={(e) => {dislikeMovie(e)}}
+                      onClick={(e) => {
+                        dislikeMovie(e);
+                      }}
                       color="secondary"
                       aria-label="add an alarm"
                     >
@@ -280,7 +300,7 @@ export default function BasicModal({ children, id }) {
                   </span>
 
                   {movie.tagline && <i className="tagline">{movie.tagline}</i>}
-
+                  <div className="MovieModal__error">{userError}</div>
                   <span className="MovieModal__description">
                     {movie.overview}
                   </span>

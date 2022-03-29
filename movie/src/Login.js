@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import {login} from "./state/userSlice";
 import "./login.css";
-import userLikesService from "./userLikesService";
-import userDislikesService from "./userDislikesService";
+import userLikesService from "./services/userLikesService";
+import userDislikesService from "./services/userDislikesService";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
