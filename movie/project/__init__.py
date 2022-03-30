@@ -1,6 +1,5 @@
 from db import app
 
-
 def create_app():  
     from auth.routes import users
     from likes.routes import likes

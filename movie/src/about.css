@@ -1,0 +1,29 @@
+.About__Title{
+    font-size: larger;
+    font-weight: bold;
+    color: #0B3C5D;
+}
+
+.About__How{
+    margin-top: 20%;
+    font-weight: bold;
+    color: #0B3C5D;
+}
+
+.About__List{
+    margin-left: 30%;
+    margin-right: 30%;
+    text-align: left;
+}
+
+.About__CreditsTitle{
+    font-weight: bold;
+    color: #0B3C5D;
+}
+
+.About__Credits{
+    margin-left: 30%;
+    margin-right: 30%;
+    display: flex;
+    flex-direction: column;
+}

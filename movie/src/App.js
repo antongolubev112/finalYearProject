@@ -13,6 +13,7 @@ import { Discover } from "./Discover";
 import Search from "./Search";
 import {LikedMovies} from './LikedMovies'
 import {Recommendations} from './Recommendations'
+import {About} from './About.js'
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
               <Route path="/search" element={<Search/>}></Route>
               <Route path="/likes" element={<LikedMovies/>}></Route>
               <Route path='/recommend' element={<Recommendations/>}></Route>
+              <Route path='/about' element={<About/>} ></Route>
             </Routes>
           </div>
       </Router>
