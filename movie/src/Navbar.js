@@ -78,6 +78,7 @@ function Header() {
 
       {user ? (
         <div className="navbar__option">
+          <span className="navbar__optionLineOne">Hello {user.fname}</span>
           <span
             onClick={(e) => handleLogout(e)}
             className="navbar__optionLineTwo"
@@ -88,21 +89,11 @@ function Header() {
       ) : (
         <Link to="/login" style={{ textDecoration: "none" }} color="white">
           <div className="navbar__option">
-            <span className="navbar__optionLineTwo">Sign in</span>
+            <span className="navbar__optionLineOne">Hello Guest</span>
+
+            <span className="navbar__optionLineTwo">Please Sign in</span>
           </div>
         </Link>
-      )}
-
-      {user ? (
-        <div className="navbar__option">
-          <span className="navbar__optionLineTwo">Hello {user.fname}</span>
-        </div>
-      ) : (
-        <div className="navbar__option">
-          <span className="navbar__optionLineOne">Hello Guest</span>
-
-          <span className="navbar__optionLineTwo">Please Sign in</span>
-        </div>
       )}
 
       <Link to="/about" style={{ textDecoration: "none" }} color="white">
