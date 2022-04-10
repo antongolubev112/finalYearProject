@@ -76,7 +76,7 @@ class Likes(db.Model):
     def exists(movie_id, user_id):
         exists = db.session.query(Likes.movie_id).filter(
             (and_(
-                user_id == user_id,
+                user_id == Likes.user_id,
                 movie_id == Likes.movie_id
             )
             )
@@ -90,7 +90,7 @@ class Likes(db.Model):
         like = Likes.query.filter(
             (and_(
                 movie_id == Likes.movie_id,
-                user_id == user_id)
+                user_id == Likes.user_id)
              )
         )
         like.delete()
@@ -131,7 +131,7 @@ class Dislikes(db.Model):
         Dislikes.query.filter(
             (and_(
                 movie_id == Dislikes.movie_id,
-                user_id == user_id)
+                user_id == Dislikes.user_id)
              )
         ).delete()
         db.session.commit()
