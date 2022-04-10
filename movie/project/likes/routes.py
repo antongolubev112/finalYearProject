@@ -1,11 +1,12 @@
 from flask import Blueprint
 likes= Blueprint('likes',__name__)
 
-from flask import jsonify,request,json
+from flask import jsonify,request,json#
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import Likes,Dislikes, Recommendations,db,User,Data
 from likes.prepare_like import push_like_to_data
 from likes.utils import like_serializer
+from sqlalchemy import func
 
 
 
@@ -44,7 +45,18 @@ def add_like():
     request_data['crew']=json.dumps(request_data['crew'])
     request_data['genres']=json.dumps(request_data['genres'])
 
-    like=Likes(movie_id=request_data['movie_id'],
+    biggest_id=db.session.query(func.max(Likes.id)).scalar()
+    
+    if biggest_id == None:
+        biggest_id=-1
+
+    biggest_id=int(biggest_id)
+    #set the next id to be id+1
+    like_id= biggest_id+1
+    print("new id is: ", like_id)
+
+    like=Likes(id= like_id,
+        movie_id=request_data['movie_id'],
         title=request_data['title'],
         genres=request_data['genres'],
         overview=request_data['overview'],

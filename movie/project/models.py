@@ -47,12 +47,10 @@ class User(db.Model):
         return db.session.query(User.password).filter_by(email=email).one()
     
 
-
-
-
 class Likes(db.Model):
     __tablename__ = "likes"
-    movie_id = db.Column(db.Integer, primary_key=True)
+    id= db.Column(db.Integer, primary_key=True)
+    movie_id = db.Column(db.Integer,nullable=False)
     title = db.Column(db.String, nullable=False)
     genres = db.Column(db.String, nullable=False)
     overview = db.Column(db.String, nullable=False)
@@ -62,7 +60,8 @@ class Likes(db.Model):
 
     user_id = db.Column(db.Integer, ForeignKey('users.user_id'))
 
-    def __init__(self, movie_id, title, genres, overview, keywords, cast, crew, user_id):
+    def __init__(self, id, movie_id, title, genres, overview, keywords, cast, crew, user_id):
+        self.id=id
         self.movie_id = movie_id
         self.title = title
         self.genres = genres
@@ -105,11 +104,13 @@ class Likes(db.Model):
 
 class Dislikes(db.Model):
     __tablename__ = "dislikes"
-    movie_id = db.Column(db.Integer, primary_key=True)
+    id= db.Column(db.Integer, primary_key=True)
+    movie_id = db.Column(db.Integer,nullable=False)
     title = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, ForeignKey('users.user_id'))
 
-    def __init__(self, movie_id, title, user_id):
+    def __init__(self, id, movie_id, title, user_id):
+        self.id=id
         self.movie_id = movie_id
         self.title = title
         self.user_id = user_id

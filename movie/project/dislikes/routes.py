@@ -5,6 +5,7 @@ from flask import json,jsonify,request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from dislikes.utils import dislike_serializer
 from models import Likes,Dislikes, Recommendations,db,User
+from sqlalchemy import func
 
 
 
@@ -55,8 +56,18 @@ def dislike():
 
     if Recommendations.exists(request_data['title'],user.user_id):
         Recommendations.delete(user.user_id,request_data['title'])
-        
-    dislike=Dislikes(movie_id=request_data['movie_id'],
+    
+    biggest_id=db.session.query(func.max(Dislikes.id)).scalar()
+    
+    if biggest_id == None:
+        biggest_id=-1
+
+    biggest_id=int(biggest_id)
+    #set the next id to be id+1
+    dislike_id= biggest_id+1
+
+    dislike=Dislikes(id= dislike_id,
+        movie_id=request_data['movie_id'],
         title=request_data['title'],
         user_id=user.user_id
     )
