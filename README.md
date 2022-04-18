@@ -1,12 +1,17 @@
 # RecommendAMov.ie
-This project is a web application that allows you to register and login and add movies from a database to your likes.  
-Based on your likes, the web app will recommend you other movies that it thinks you will enjoy.
+This project is a single page web application that allows a user to register and login. It allows the user to browse a vast amoung of movies and also to "like" these movies. 
+The web application then compares user's likes to a database of movies that are stored in PostgreSQL. It does this using cosine similarity. The web app returns the most relevant movies to user. 
 
-## Front End:
-React.  
-  
-## Back End:
-- Python
+## Screencast:
+The link below will bring you to a demonstration of the project in action.
+https://youtu.be/wLS8fvFaEI0
+
+## Technologies stack
+- JavaScript
+- React
 - Flask
-- SQLAlchemy
-- PostgreSQL
+- Python
+- PostgreSQL 
+
+## TMDB
+All posters in this application belong to The Movie DataBase(TMDB). All movie information is also provided by TMDB. TMDB is a community built movie and TV database that is maintained by its users. It can be found here https://www.themoviedb.org/. While this application uses the TMDB API, it is not endorsed or certified by TMDB.
