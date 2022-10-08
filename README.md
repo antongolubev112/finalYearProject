@@ -3,8 +3,8 @@
 ### GMIT BSc (Hons) Computing in Software Development
 ### Applied Project and Minor Dissertation
 
-This project was built with the aim of allowing recommending movies to a user by finding movies similar to movies that they've already seen and liked. 
-It is a single page web application that allows users to register and login. It allows the user to browse a vast amoung of movies and also to "like" these movies. 
+This project was built with the aim of recommending movies to a user by finding movies similar to movies that they've already seen and liked. 
+It is a single page web application that allows users to register and login. It allows the user to browse a vast amount of movies and also to "like" these movies. 
 The web application then compares user's likes to a database of movies that are stored in PostgreSQL. It does this using cosine similarity. The web app returns the most relevant movies back to the user. 
 
 ## Main Features:
